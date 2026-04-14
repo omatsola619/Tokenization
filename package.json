@@ -12,6 +12,7 @@
     "blockchain:setup": "concurrently \"npx hardhat node\" \"wait-on tcp:8545 && cd ERC-3643 && npx hardhat run scripts/deploy-trex.ts --network localhost && ts-node ../scripts/sync-env.ts\""
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
     "express": "^4.19.2"
   },

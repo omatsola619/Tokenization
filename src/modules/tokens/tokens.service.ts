@@ -1,6 +1,7 @@
 import { blockchainService } from '../../services/blockchain.service';
 import { prisma } from '../../database/database.service';
 import { investorsService } from '../investors/investors.service';
+import { config as appConfig } from '../../config';
 
 export class TokensService {
   private async getConfigFromDb() {
@@ -8,7 +9,7 @@ export class TokensService {
     if (!config) {
       // Fallback or initialization logic
       return {
-        address: '0x18e186A9d06A70d1B208A2020fcF55428E532366',
+        address: appConfig.contracts.token,
         name: 'Acme Security Token',
         symbol: 'ACME',
         decimals: 18,
@@ -21,10 +22,10 @@ export class TokensService {
 
   async deploy(name: string, symbol: string, decimals: number, complianceModule: string) {
     const config = await prisma.tokenConfig.upsert({
-      where: { address: '0x18e186A9d06A70d1B208A2020fcF55428E532366' }, // For now we assume a single token
+      where: { address: appConfig.contracts.token }, // For now we assume a single token
       update: { name, symbol, decimals },
       create: {
-        address: '0x18e186A9d06A70d1B208A2020fcF55428E532366',
+        address: appConfig.contracts.token,
         name,
         symbol,
         decimals

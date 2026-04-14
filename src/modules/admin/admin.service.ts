@@ -1,4 +1,5 @@
 import { prisma } from '../../database/database.service';
+import { config } from '../../config';
 
 export class AdminService {
   async forceTransfer(from: string, to: string, amount: string) {
@@ -23,7 +24,7 @@ export class AdminService {
 
   async pause() {
     await prisma.tokenConfig.update({
-      where: { address: '0x18e186A9d06A70d1B208A2020fcF55428E532366' },
+      where: { address: config.contracts.token },
       data: { isPaused: true }
     });
     return { paused: true };
@@ -31,7 +32,7 @@ export class AdminService {
 
   async unpause() {
     await prisma.tokenConfig.update({
-      where: { address: '0x18e186A9d06A70d1B208A2020fcF55428E532366' },
+      where: { address: config.contracts.token },
       data: { isPaused: false }
     });
     return { paused: false };
