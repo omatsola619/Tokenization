@@ -39,7 +39,7 @@ export class TokensService {
   }
 
   async getPortfolio(wallet: string) {
-    if (wallet !== '0xInvestorA' && !(await investorsService.exists(wallet))) {
+    if (!(await investorsService.exists(wallet))) {
       throw { status: 404, message: 'investor not found' };
     }
 

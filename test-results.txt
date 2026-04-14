@@ -1,0 +1,1714 @@
+
+> erc3643-backend@1.0.0 test:integration
+> jest --config ./jest.config.json tests/integration --runInBand
+
+ts-jest[ts-jest-transformer] (WARN) Define `ts-jest` config under `globals` is deprecated. Please do
+transform: {
+    <transform_regex>: ['ts-jest', { /* ts-jest config goes here in Jest */ }],
+},
+See more at https://kulshekhar.github.io/ts-jest/docs/getting-started/presets#advanced
+FAIL tests/integration/investors.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+    console.error
+      { status: 409, message: 'wallet already registered' }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at register (src/modules/investors/investors.controller.ts:14:7)
+
+    console.error
+      InvalidAddressError: Address "0xDupe" is invalid.
+      
+      - Address must be a hex value of 20 bytes (40 hex characters).
+      - Address must match its checksum counterpart.
+      
+      Version: viem@2.47.4
+          at encodeAddress (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:226:32)
+          at prepareParam (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:162:12)
+          at prepareParams (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:127:25)
+          at encodeAbiParameters (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:100:26)
+          at encodeFunctionData (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeFunctionData.ts:92:28)
+          at simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/actions/public/simulateContract.ts:271:38)
+          at Object.simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/clients/decorators/public.ts:2126:49)
+          at BlockchainService.registerInvestor (/Users/omash/Desktop/blockchain-projects/Tokenization/src/services/blockchain.service.ts:47:49)
+          at InvestorsService.register (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/investors/investors.service.ts:17:29)
+          at processTicksAndRejections (node:internal/process/task_queues:95:5)
+          at register (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/investors/investors.controller.ts:11:24) {
+        details: undefined,
+        docsPath: undefined,
+        metaMessages: [
+          '- Address must be a hex value of 20 bytes (40 hex characters).',
+          '- Address must match its checksum counterpart.'
+        ],
+        shortMessage: 'Address "0xDupe" is invalid.',
+        version: '2.47.4'
+      }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at register (src/modules/investors/investors.controller.ts:14:7)
+
+    console.error
+      InvalidAddressError: Address "0xDupe" is invalid.
+      
+      - Address must be a hex value of 20 bytes (40 hex characters).
+      - Address must match its checksum counterpart.
+      
+      Version: viem@2.47.4
+          at encodeAddress (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:226:32)
+          at prepareParam (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:162:12)
+          at prepareParams (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:127:25)
+          at encodeAbiParameters (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:100:26)
+          at encodeFunctionData (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeFunctionData.ts:92:28)
+          at simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/actions/public/simulateContract.ts:271:38)
+          at Object.simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/clients/decorators/public.ts:2126:49)
+          at BlockchainService.registerInvestor (/Users/omash/Desktop/blockchain-projects/Tokenization/src/services/blockchain.service.ts:47:49)
+          at InvestorsService.register (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/investors/investors.service.ts:17:29)
+          at processTicksAndRejections (node:internal/process/task_queues:95:5)
+          at register (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/investors/investors.controller.ts:11:24) {
+        details: undefined,
+        docsPath: undefined,
+        metaMessages: [
+          '- Address must be a hex value of 20 bytes (40 hex characters).',
+          '- Address must match its checksum counterpart.'
+        ],
+        shortMessage: 'Address "0xDupe" is invalid.',
+        version: '2.47.4'
+      }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at register (src/modules/investors/investors.controller.ts:14:7)
+
+    console.error
+      { status: 404, message: 'investor not found' }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at getProfile (src/modules/investors/investors.controller.ts:24:7)
+
+  ● Investor Identity APIs › POST /investors/register › should return 201 with investorId on valid registration
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 409
+
+      13 |         .send({ wallet: '0xInvestorA', country: 'GB', kycProviderId: 'sumsub_123', metadata: {} });
+      14 |
+    > 15 |       expect(res.status).toBe(201);
+         |                          ^
+      16 |       expect(res.body).toHaveProperty('status', 'success');
+      17 |       expect(res.body).toHaveProperty('investorId');
+      18 |       expect(res.body).toHaveProperty('wallet', '0xInvestorA');
+
+      at Object.<anonymous> (tests/integration/investors.test.ts:15:26)
+
+  ● Investor Identity APIs › POST /investors/register › should return 409 when wallet already registered
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 409
+    Received: 500
+
+      34 |         .send({ wallet: '0xDupe', country: 'US', kycProviderId: 'p1' });
+      35 |
+    > 36 |       expect(res.status).toBe(409);
+         |                          ^
+      37 |     });
+      38 |   });
+      39 |
+
+      at Object.<anonymous> (tests/integration/investors.test.ts:36:26)
+
+FAIL tests/integration/claims.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+  ● Claim Management APIs › POST /claims/issue › should return 201 with claimId when issued by trusted claim issuer
+
+    expect(received).toHaveProperty(path, value)
+
+    Expected path: "status"
+
+    Expected value: "issued"
+    Received value: "active"
+
+      15 |
+      16 |       expect(res.status).toBe(201);
+    > 17 |       expect(res.body).toHaveProperty('status', 'issued');
+         |                        ^
+      18 |       expect(res.body).toHaveProperty('claimId');
+      19 |     });
+      20 |
+
+      at Object.<anonymous> (tests/integration/claims.test.ts:17:24)
+
+  ● Claim Management APIs › POST /claims/topics › should return 201 when compliance officer adds a claim topic
+
+    expect(received).toHaveProperty(path, value)
+
+    Expected path: "topic"
+    Received path: []
+
+    Expected value: "ACCREDITED_INVESTOR"
+    Received value: {"info": "Topic management handled via config", "status": "ok"}
+
+      77 |
+      78 |       expect(res.status).toBe(201);
+    > 79 |       expect(res.body).toHaveProperty('topic', 'ACCREDITED_INVESTOR');
+         |                        ^
+      80 |     });
+      81 |
+      82 |     it('should return 403 when investor tries to add topic', async () => {
+
+      at Object.<anonymous> (tests/integration/claims.test.ts:79:24)
+
+FAIL tests/integration/transfers.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+    console.error
+      InvalidAddressError: Address "0xAAA" is invalid.
+      
+      - Address must be a hex value of 20 bytes (40 hex characters).
+      - Address must match its checksum counterpart.
+      
+      Version: viem@2.47.4
+          at encodeAddress (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:226:32)
+          at prepareParam (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:162:12)
+          at prepareParams (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:127:25)
+          at encodeAbiParameters (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:100:26)
+          at encodeFunctionData (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeFunctionData.ts:92:28)
+          at readContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/actions/public/readContract.ts:116:38)
+          at Object.readContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/clients/decorators/public.ts:2120:41)
+          at BlockchainService.canTransfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/services/blockchain.service.ts:81:36)
+          at TokensService.transfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.service.ts:103:49)
+          at transfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.controller.ts:43:42)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/src/middleware/auth.middleware.ts:37:3
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at Route.dispatch (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:119:3)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:284:15
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/body-parser/lib/read.js:137:5
+          at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+          at invokeCallback (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:238:16)
+          at done (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:227:7)
+          at IncomingMessage.onEnd (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:287:7)
+          at IncomingMessage.emit (node:events:524:28)
+          at endReadableNT (node:internal/streams/readable:1698:12)
+          at processTicksAndRejections (node:internal/process/task_queues:82:21) {
+        details: undefined,
+        docsPath: undefined,
+        metaMessages: [
+          '- Address must be a hex value of 20 bytes (40 hex characters).',
+          '- Address must match its checksum counterpart.'
+        ],
+        shortMessage: 'Address "0xAAA" is invalid.',
+        version: '2.47.4'
+      }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at transfer (src/modules/tokens/tokens.controller.ts:46:7)
+
+    console.error
+      InvalidAddressError: Address "0xAAA" is invalid.
+      
+      - Address must be a hex value of 20 bytes (40 hex characters).
+      - Address must match its checksum counterpart.
+      
+      Version: viem@2.47.4
+          at encodeAddress (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:226:32)
+          at prepareParam (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:162:12)
+          at prepareParams (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:127:25)
+          at encodeAbiParameters (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:100:26)
+          at encodeFunctionData (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeFunctionData.ts:92:28)
+          at readContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/actions/public/readContract.ts:116:38)
+          at Object.readContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/clients/decorators/public.ts:2120:41)
+          at BlockchainService.canTransfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/services/blockchain.service.ts:81:36)
+          at TokensService.transfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.service.ts:103:49)
+          at transfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.controller.ts:43:42)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/src/middleware/auth.middleware.ts:37:3
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at Route.dispatch (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:119:3)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:284:15
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/body-parser/lib/read.js:137:5
+          at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+          at invokeCallback (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:238:16)
+          at done (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:227:7)
+          at IncomingMessage.onEnd (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:287:7)
+          at IncomingMessage.emit (node:events:524:28)
+          at endReadableNT (node:internal/streams/readable:1698:12)
+          at processTicksAndRejections (node:internal/process/task_queues:82:21) {
+        details: undefined,
+        docsPath: undefined,
+        metaMessages: [
+          '- Address must be a hex value of 20 bytes (40 hex characters).',
+          '- Address must match its checksum counterpart.'
+        ],
+        shortMessage: 'Address "0xAAA" is invalid.',
+        version: '2.47.4'
+      }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at transfer (src/modules/tokens/tokens.controller.ts:46:7)
+
+    console.error
+      InvalidAddressError: Address "0xA" is invalid.
+      
+      - Address must be a hex value of 20 bytes (40 hex characters).
+      - Address must match its checksum counterpart.
+      
+      Version: viem@2.47.4
+          at encodeAddress (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:226:32)
+          at prepareParam (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:162:12)
+          at prepareParams (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:127:25)
+          at encodeAbiParameters (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:100:26)
+          at encodeFunctionData (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeFunctionData.ts:92:28)
+          at readContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/actions/public/readContract.ts:116:38)
+          at Object.readContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/clients/decorators/public.ts:2120:41)
+          at BlockchainService.canTransfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/services/blockchain.service.ts:81:36)
+          at TokensService.transfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.service.ts:103:49)
+          at TokensService.batchTransfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.service.ts:129:18)
+          at batchTransfer (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.controller.ts:53:42)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/src/middleware/auth.middleware.ts:37:3
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at Route.dispatch (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:119:3)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:284:15
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/body-parser/lib/read.js:137:5
+          at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+          at invokeCallback (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:238:16)
+          at done (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:227:7)
+          at IncomingMessage.onEnd (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:287:7)
+          at IncomingMessage.emit (node:events:524:28)
+          at endReadableNT (node:internal/streams/readable:1698:12)
+          at processTicksAndRejections (node:internal/process/task_queues:82:21) {
+        details: undefined,
+        docsPath: undefined,
+        metaMessages: [
+          '- Address must be a hex value of 20 bytes (40 hex characters).',
+          '- Address must match its checksum counterpart.'
+        ],
+        shortMessage: 'Address "0xA" is invalid.',
+        version: '2.47.4'
+      }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at batchTransfer (src/modules/tokens/tokens.controller.ts:56:7)
+
+  ● Transfer APIs › POST /tokens/transfer › should return 200 with txHash on successful transfer
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+      14 |         .send({ from: '0xAAA', to: '0xBBB', amount: '50' });
+      15 |
+    > 16 |       expect(res.status).toBe(200);
+         |                          ^
+      17 |       expect(res.body).toHaveProperty('txHash');
+      18 |       expect(res.body.txHash).toMatch(/^0x/);
+      19 |     });
+
+      at Object.<anonymous> (tests/integration/transfers.test.ts:16:26)
+
+  ● Transfer APIs › POST /tokens/transfer › should return 422 when compliance pre-check fails
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 422
+    Received: 500
+
+      24 |         .send({ from: '0xAAA', to: '0xUnregistered', amount: '50' });
+      25 |
+    > 26 |       expect(res.status).toBe(422);
+         |                          ^
+      27 |       expect(res.body).toHaveProperty('error');
+      28 |     });
+      29 |
+
+      at Object.<anonymous> (tests/integration/transfers.test.ts:26:26)
+
+  ● Transfer APIs › POST /tokens/batch-transfer › should return 202 with batch job on valid request
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 202
+    Received: 500
+
+      52 |         .send({ transfers: [{ from: '0xA', to: '0xB', amount: '10' }] });
+      53 |
+    > 54 |       expect(res.status).toBe(202);
+         |                          ^
+      55 |       expect(res.body).toHaveProperty('jobId');
+      56 |     });
+      57 |   });
+
+      at Object.<anonymous> (tests/integration/transfers.test.ts:54:26)
+
+FAIL tests/integration/token-issuance.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+    console.error
+      InvalidAddressError: Address "0xInvestorA" is invalid.
+      
+      - Address must be a hex value of 20 bytes (40 hex characters).
+      - Address must match its checksum counterpart.
+      
+      Version: viem@2.47.4
+          at encodeAddress (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:226:32)
+          at prepareParam (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:162:12)
+          at prepareParams (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:127:25)
+          at encodeAbiParameters (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:100:26)
+          at encodeFunctionData (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeFunctionData.ts:92:28)
+          at simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/actions/public/simulateContract.ts:271:38)
+          at Object.simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/clients/decorators/public.ts:2126:49)
+          at BlockchainService.mintTokens (/Users/omash/Desktop/blockchain-projects/Tokenization/src/services/blockchain.service.ts:65:49)
+          at TokensService.mint (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.service.ts:64:29)
+          at mint (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.controller.ts:11:42)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/src/middleware/auth.middleware.ts:37:3
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at Route.dispatch (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:119:3)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:284:15
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/body-parser/lib/read.js:137:5
+          at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+          at invokeCallback (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:238:16)
+          at done (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:227:7)
+          at IncomingMessage.onEnd (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:287:7)
+          at IncomingMessage.emit (node:events:524:28)
+          at endReadableNT (node:internal/streams/readable:1698:12)
+          at processTicksAndRejections (node:internal/process/task_queues:82:21) {
+        details: undefined,
+        docsPath: undefined,
+        metaMessages: [
+          '- Address must be a hex value of 20 bytes (40 hex characters).',
+          '- Address must match its checksum counterpart.'
+        ],
+        shortMessage: 'Address "0xInvestorA" is invalid.',
+        version: '2.47.4'
+      }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at mint (src/modules/tokens/tokens.controller.ts:14:7)
+
+    console.error
+      InvalidAddressError: Address "0x1" is invalid.
+      
+      - Address must be a hex value of 20 bytes (40 hex characters).
+      - Address must match its checksum counterpart.
+      
+      Version: viem@2.47.4
+          at encodeAddress (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:226:32)
+          at prepareParam (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:162:12)
+          at prepareParams (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:127:25)
+          at encodeAbiParameters (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeAbiParameters.ts:100:26)
+          at encodeFunctionData (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/utils/abi/encodeFunctionData.ts:92:28)
+          at simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/actions/public/simulateContract.ts:271:38)
+          at Object.simulateContract (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/viem/clients/decorators/public.ts:2126:49)
+          at BlockchainService.mintTokens (/Users/omash/Desktop/blockchain-projects/Tokenization/src/services/blockchain.service.ts:65:49)
+          at TokensService.mint (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.service.ts:64:29)
+          at TokensService.batchMint (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.service.ts:86:18)
+          at batchMint (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.controller.ts:21:42)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/src/middleware/auth.middleware.ts:37:3
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:149:13)
+          at Route.dispatch (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/route.js:119:3)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:284:15
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:646:15
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:265:14)
+          at Function.handle (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:175:3)
+          at router (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:47:12)
+          at Layer.handle [as handle_request] (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/layer.js:95:5)
+          at trim_prefix (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:328:13)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:286:9
+          at Function.process_params (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:346:12)
+          at next (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/router/index.js:280:10)
+          at /Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/body-parser/lib/read.js:137:5
+          at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+          at invokeCallback (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:238:16)
+          at done (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:227:7)
+          at IncomingMessage.onEnd (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/raw-body/index.js:287:7)
+          at IncomingMessage.emit (node:events:524:28)
+          at endReadableNT (node:internal/streams/readable:1698:12)
+          at processTicksAndRejections (node:internal/process/task_queues:82:21) {
+        details: undefined,
+        docsPath: undefined,
+        metaMessages: [
+          '- Address must be a hex value of 20 bytes (40 hex characters).',
+          '- Address must match its checksum counterpart.'
+        ],
+        shortMessage: 'Address "0x1" is invalid.',
+        version: '2.47.4'
+      }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at batchMint (src/modules/tokens/tokens.controller.ts:24:7)
+
+  ● Token Issuance APIs › POST /tokens/mint › should return 202 with jobId when agent mints tokens
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 202
+    Received: 500
+
+      14 |         .send({ wallet: '0xInvestorA', amount: '1000' });
+      15 |
+    > 16 |       expect(res.status).toBe(202);
+         |                          ^
+      17 |       expect(res.body).toHaveProperty('jobId');
+      18 |     });
+      19 |
+
+      at Object.<anonymous> (tests/integration/token-issuance.test.ts:16:26)
+
+  ● Token Issuance APIs › POST /tokens/batch-mint › should return 202 with batch job details when agent batch mints
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 202
+    Received: 500
+
+      50 |         .send({ recipients: [{ wallet: '0x1', amount: '100' }, { wallet: '0x2', amount: '200' }] });
+      51 |
+    > 52 |       expect(res.status).toBe(202);
+         |                          ^
+      53 |       expect(res.body).toHaveProperty('jobId');
+      54 |       expect(res.body).toHaveProperty('count', 2);
+      55 |     });
+
+      at Object.<anonymous> (tests/integration/token-issuance.test.ts:52:26)
+
+FAIL tests/integration/health.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+  ● Health & Diagnostics APIs › GET /health › should return 200 with API health status
+
+    expect(received).toHaveProperty(path, value)
+
+    Expected path: "status"
+    Received path: []
+
+    Expected value: "ok"
+    Received value: {}
+
+      13 |
+      14 |       expect(res.status).toBe(200);
+    > 15 |       expect(res.body).toHaveProperty('status', 'ok');
+         |                        ^
+      16 |       expect(res.body).toHaveProperty('uptime');
+      17 |     });
+      18 |   });
+
+      at Object.<anonymous> (tests/integration/health.test.ts:15:24)
+
+  ● Health & Diagnostics APIs › GET /health/blockchain › should return 200 with blockchain node connectivity status
+
+    expect(received).toHaveProperty(path)
+
+    Expected path: "connected"
+    Received path: []
+
+    Received value: {}
+
+      25 |
+      26 |       expect(res.status).toBe(200);
+    > 27 |       expect(res.body).toHaveProperty('connected');
+         |                        ^
+      28 |       expect(typeof res.body.connected).toBe('boolean');
+      29 |       expect(res.body).toHaveProperty('chainId');
+      30 |       expect(res.body).toHaveProperty('blockNumber');
+
+      at Object.<anonymous> (tests/integration/health.test.ts:27:24)
+
+FAIL tests/integration/token-deployment.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+    console.error
+      TypeError: Do not know how to serialize a BigInt
+          at JSON.stringify (<anonymous>)
+          at stringify (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/response.js:1160:12)
+          at ServerResponse.json (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/response.js:271:14)
+          at deploy (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.controller.ts:75:30)
+          at processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at deploy (src/modules/tokens/tokens.controller.ts:77:7)
+
+    console.error
+      TypeError: Do not know how to serialize a BigInt
+          at JSON.stringify (<anonymous>)
+          at stringify (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/response.js:1160:12)
+          at ServerResponse.json (/Users/omash/Desktop/blockchain-projects/Tokenization/node_modules/express/lib/response.js:271:14)
+          at getConfig (/Users/omash/Desktop/blockchain-projects/Tokenization/src/modules/tokens/tokens.controller.ts:84:30)
+          at processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at getConfig (src/modules/tokens/tokens.controller.ts:86:7)
+
+  ● Token Deployment & Configuration APIs › POST /tokens/deploy › should return 201 with deployed contract addresses when issuer deploys
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 500
+
+      14 |         .send({ name: 'Acme Security Token', symbol: 'ACME', decimals: 18, complianceModule: 'default' });
+      15 |
+    > 16 |       expect(res.status).toBe(201);
+         |                          ^
+      17 |       expect(res.body).toHaveProperty('tokenAddress');
+      18 |       expect(res.body.tokenAddress).toMatch(/^0x/);
+      19 |       expect(res.body).toHaveProperty('identityRegistry');
+
+      at Object.<anonymous> (tests/integration/token-deployment.test.ts:16:26)
+
+  ● Token Deployment & Configuration APIs › GET /tokens/config › should return 200 with token configuration
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+      44 |       const res = await request(app).get(`${BASE}/tokens/config`);
+      45 |
+    > 46 |       expect(res.status).toBe(200);
+         |                          ^
+      47 |       expect(res.body).toHaveProperty('name');
+      48 |       expect(res.body).toHaveProperty('symbol');
+      49 |       expect(res.body).toHaveProperty('decimals');
+
+      at Object.<anonymous> (tests/integration/token-deployment.test.ts:46:26)
+
+FAIL tests/integration/transactions.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+    console.error
+      { status: 404, message: 'transaction not found' }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at getByHash (src/modules/transactions/transactions.controller.ts:11:7)
+
+    console.error
+      { status: 404, message: 'transaction not found' }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at getByHash (src/modules/transactions/transactions.controller.ts:11:7)
+
+  ● Transaction Tracking APIs › GET /transactions/:txHash › should return 200 with transaction details
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 404
+
+      12 |       const res = await request(app).get(`${BASE}/transactions/0xSomeTxHash`);
+      13 |
+    > 14 |       expect(res.status).toBe(200);
+         |                          ^
+      15 |       expect(res.body).toHaveProperty('txHash', '0xSomeTxHash');
+      16 |       expect(res.body).toHaveProperty('status');
+      17 |       expect(res.body).toHaveProperty('from');
+
+      at Object.<anonymous> (tests/integration/transactions.test.ts:14:26)
+
+PASS tests/integration/portfolio.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+    console.error
+      { status: 404, message: 'investor not found' }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at Immediate.next (node_modules/express/lib/router/index.js:280:10)
+      at Immediate._onImmediate (node_modules/express/lib/router/index.js:646:15)
+
+PASS tests/integration/admin.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+PASS tests/integration/issuers.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+PASS tests/integration/agents.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+    console.error
+      { status: 400, message: 'invalid role' }
+
+      3 |
+      4 | export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
+    > 5 |   console.error(err);
+        |           ^
+      6 |
+      7 |   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      8 |     if (err.code === 'P2002') {
+
+      at errorMiddleware (src/middleware/error.middleware.ts:5:11)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/express/lib/router/index.js:326:13)
+      at node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/express/lib/router/index.js:280:10)
+      at node_modules/express/lib/router/index.js:646:15
+      at next (node_modules/express/lib/router/index.js:265:14)
+      at next (node_modules/express/lib/router/route.js:141:14)
+      at addAgent (src/modules/agents/agents.controller.ts:11:7)
+
+PASS tests/integration/compliance.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+PASS tests/integration/events.test.ts
+  ● Console
+
+    console.log
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tokenization_db?schema=public
+
+      at Object.<anonymous> (src/database/database.service.ts:10:9)
+
+    console.log
+      [dotenv@17.3.1] injecting env (0) from .env -- tip: ⚡️ secrets for agents: https://dotenvx.com/as2
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+
+Test Suites: 7 failed, 6 passed, 13 total
+Tests:       14 failed, 60 passed, 74 total
+Snapshots:   0 total
+Time:        5.295 s, estimated 7 s
+Ran all test suites matching /tests\/integration/i.
+Jest did not exit one second after the test run has completed.
+
+'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.

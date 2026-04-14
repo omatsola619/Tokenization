@@ -53,6 +53,16 @@ export const TokenABI = [
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }, { internalType: 'uint8', name: '', type: 'uint8' }],
     stateMutability: 'view',
     type: 'function'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: 'from', type: 'address' },
+      { indexed: true, internalType: 'address', name: 'to', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'value', type: 'uint256' }
+    ],
+    name: 'Transfer',
+    type: 'event'
   }
 ] as const;
 
@@ -67,5 +77,15 @@ export const IdentityRegistryABI = [
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: 'investor', type: 'address' },
+      { indexed: true, internalType: 'address', name: 'identity', type: 'address' },
+      { indexed: false, internalType: 'uint16', name: 'country', type: 'uint16' }
+    ],
+    name: 'IdentityRegistered',
+    type: 'event'
   }
 ] as const;

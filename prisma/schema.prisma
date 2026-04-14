@@ -82,5 +82,15 @@ model Event {
   data        Json
   createdAt   DateTime @default(now())
 
+  @@unique([txHash, logIndex])
   @@map("events")
+}
+
+model Balance {
+  wallet    String   @id
+  amount    BigInt   @default(0)
+  frozen    BigInt   @default(0)
+  updatedAt DateTime @default(now())
+
+  @@map("balances")
 }

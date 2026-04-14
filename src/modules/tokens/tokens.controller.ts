@@ -90,7 +90,7 @@ export class TokensController {
   async getBalance(req: Request, res: Response, next: NextFunction) {
     try {
       const { wallet } = req.params;
-      const balance = tokensService.getBalance(wallet);
+      const balance = await tokensService.getBalance(wallet);
       return res.status(200).json({ wallet, balance });
     } catch (error) {
       next(error);
