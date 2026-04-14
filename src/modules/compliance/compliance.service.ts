@@ -1,34 +1,51 @@
-// Mock in-memory compliance store
-const complianceStore = new Map<string, { frozen: boolean, frozenAmount: string }>();
+import { prisma } from '../../database/database.service';
 
 export class ComplianceService {
   async freeze(wallet: string) {
-    const status = complianceStore.get(wallet) || { frozen: false, frozenAmount: '0' };
-    status.frozen = true;
-    complianceStore.set(wallet, status);
+    await prisma.investor.update({
+      where: { walletAddress: wallet },
+      data: { frozen: true }
+    });
     return { wallet, frozen: true };
   }
 
   async unfreeze(wallet: string) {
-    const status = complianceStore.get(wallet) || { frozen: false, frozenAmount: '0' };
-    status.frozen = false;
-    complianceStore.set(wallet, status);
+    await prisma.investor.update({
+      where: { walletAddress: wallet },
+      data: { frozen: false }
+    });
     return { wallet, frozen: false };
   }
 
   async freezeTokens(wallet: string, amount: string) {
-    const status = complianceStore.get(wallet) || { frozen: false, frozenAmount: '0' };
-    status.frozenAmount = amount;
-    complianceStore.set(wallet, status);
+    const investor = await prisma.investor.findUnique({ where: { walletAddress: wallet } });
+    const meta = (investor?.metadata as any) || {};
+    
+    await prisma.investor.update({
+      where: { walletAddress: wallet },
+      data: {
+        metadata: {
+          ...meta,
+          frozenAmount: amount
+        }
+      }
+    });
+
     return { wallet, frozenAmount: amount };
   }
 
   async getStatus(wallet: string) {
-    const status = complianceStore.get(wallet) || { frozen: false, frozenAmount: '0' };
+    const investor = await prisma.investor.findUnique({
+      where: { walletAddress: wallet }
+    });
+    if (!investor) throw { status: 404, message: 'investor not found' };
+
+    const meta = (investor.metadata as any) || {};
+
     return {
-      wallet,
-      frozen: status.frozen,
-      frozenTokens: status.frozenAmount
+      wallet: investor.walletAddress,
+      frozen: investor.frozen,
+      frozenTokens: meta.frozenAmount || '0'
     };
   }
 }

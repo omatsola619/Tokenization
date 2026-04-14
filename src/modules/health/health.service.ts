@@ -1,17 +1,42 @@
+import { prisma } from '../../database/database.service';
+import { blockchainService } from '../../services/blockchain.service';
+
 export class HealthService {
-  getApiHealth() {
+  async getApiHealth() {
+    let dbStatus = 'ok';
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+    } catch (e) {
+      dbStatus = 'error';
+    }
+
     return {
       status: 'ok',
-      uptime: process.uptime()
+      database: dbStatus,
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString()
     };
   }
 
-  getBlockchainHealth() {
-    return {
-      connected: true,
-      chainId: 31337,
-      blockNumber: 12345
-    };
+  async getBlockchainHealth() {
+    try {
+      const publicClient = blockchainService.getPublicClient();
+      const blockNumber = await publicClient.getBlockNumber();
+      const chainId = await publicClient.getChainId();
+
+      return {
+        status: 'ok',
+        connected: true,
+        chainId: chainId,
+        blockNumber: blockNumber.toString()
+      };
+    } catch (error) {
+      return {
+        status: 'error',
+        connected: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
   }
 }
 

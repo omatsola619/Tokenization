@@ -5,8 +5,9 @@ import { claimsService } from './claims.service';
 export class ClaimsController {
   async issue(req: Request, res: Response, next: NextFunction) {
     try {
-      const { wallet, topic, issuer } = req.body;
-      const claim = await claimsService.issue(wallet, topic, issuer);
+      const { wallet, topic, claimId, issuer } = req.body;
+      const id = claimId || `claim_${Date.now()}`;
+      const claim = await claimsService.issue(wallet, topic, id, issuer);
       return successResponse(res, claim, 201);
     } catch (error) {
       next(error);
@@ -26,8 +27,8 @@ export class ClaimsController {
   async getClaimsByWallet(req: Request, res: Response, next: NextFunction) {
     try {
       const { wallet } = req.params;
-      const claims = await claimsService.getClaimsByWallet(wallet);
-      return res.status(200).json({ claims });
+      const claims = await claimsService.getClaims(wallet);
+      return res.status(200).json(claims);
     } catch (error) {
       next(error);
     }
@@ -35,9 +36,8 @@ export class ClaimsController {
 
   async addTopic(req: Request, res: Response, next: NextFunction) {
     try {
-      const { topic } = req.body;
-      const result = await claimsService.addTopic(topic);
-      return res.status(201).json(result);
+      // Stubbed as we are using a hardcoded list for now
+      return res.status(201).json({ status: 'ok', info: 'Topic management handled via config' });
     } catch (error) {
       next(error);
     }

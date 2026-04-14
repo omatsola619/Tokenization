@@ -1,11 +1,20 @@
-// Mock in-memory admin store
-let tokenPaused = false;
+import { prisma } from '../../database/database.service';
 
 export class AdminService {
   async forceTransfer(from: string, to: string, amount: string) {
-    // Regulator skip compliance checks
+    const tx = await prisma.transaction.create({
+      data: {
+        txHash: `0x_force_${Math.random().toString(16).slice(2, 66)}`,
+        from,
+        to,
+        amount: BigInt(amount),
+        type: 'forceTransfer',
+        status: 'confirmed'
+      }
+    });
+
     return {
-      txHash: `0x_force_${Math.random().toString(16).slice(2, 66)}`,
+      txHash: tx.txHash,
       from,
       to,
       amount
@@ -13,17 +22,24 @@ export class AdminService {
   }
 
   async pause() {
-    tokenPaused = true;
+    await prisma.tokenConfig.update({
+      where: { address: '0x18e186A9d06A70d1B208A2020fcF55428E532366' },
+      data: { isPaused: true }
+    });
     return { paused: true };
   }
 
   async unpause() {
-    tokenPaused = false;
+    await prisma.tokenConfig.update({
+      where: { address: '0x18e186A9d06A70d1B208A2020fcF55428E532366' },
+      data: { isPaused: false }
+    });
     return { paused: false };
   }
 
-  isPaused() {
-    return tokenPaused;
+  async isPaused() {
+    const config = await prisma.tokenConfig.findFirst();
+    return config?.isPaused || false;
   }
 }
 

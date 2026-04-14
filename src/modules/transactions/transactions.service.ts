@@ -1,23 +1,32 @@
-// Mock transactions
-const txStore = new Map<string, any>([
-  ['0xSomeTxHash', { txHash: '0xSomeTxHash', status: 'confirmed', from: '0xAAA', to: '0xBBB', amount: '100' }]
-]);
+import { prisma } from '../../database/database.service';
 
 export class TransactionsService {
   async getByHash(txHash: string) {
-    const tx = txStore.get(txHash);
+    const tx = await prisma.transaction.findUnique({
+      where: { txHash }
+    });
     if (!tx) throw { status: 404, message: 'transaction not found' };
-    return tx;
+    
+    return {
+      ...tx,
+      amount: tx.amount.toString()
+    };
   }
 
   async getByWallet(wallet: string) {
-    const txs: any[] = [];
-    txStore.forEach(tx => {
-      if (tx.from === wallet || tx.to === wallet) {
-        txs.push(tx);
+    const txs = await prisma.transaction.findMany({
+      where: {
+        OR: [
+          { from: wallet },
+          { to: wallet }
+        ]
       }
     });
-    return txs;
+
+    return txs.map(tx => ({
+      ...tx,
+      amount: tx.amount.toString()
+    }));
   }
 }
 

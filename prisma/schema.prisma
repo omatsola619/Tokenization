@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Investor {
+  id                 String    @id @default(uuid())
+  walletAddress      String    @unique
+  country            String
+  kycProviderId      String?
+  identityAddress    String?
+  identityRegistered Boolean   @default(false)
+  frozen             Boolean   @default(false)
+  metadata           Json?
+  claims             Claim[]
+  wallets            Wallet[]
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("investors")
+}
+
+model Wallet {
+  address         String   @id
+  investorId      String
+  investor        Investor @relation(fields: [investorId], references: [id])
+  identityAddress String?
+  isPrimary       Boolean  @default(false)
+
+  @@map("wallets")
+}
+
+model Claim {
+  id        String   @id @default(uuid())
+  wallet    String
+  investor  Investor @relation(fields: [wallet], references: [walletAddress])
+  topic     String
+  claimId   String?
+  issuer    String?
+  status    String   @default("active") // active | revoked
+  createdAt DateTime @default(now())
+
+  @@map("claims")
+}
+
+model TokenConfig {
+  address      String  @id
+  name         String
+  symbol       String
+  decimals     Int     @default(18)
+  totalSupply  BigInt  @default(0)
+  isPaused     Boolean @default(false)
+
+  @@map("tokens")
+}
+
+model Transaction {
+  txHash    String   @id
+  from      String
+  to        String
+  amount    BigInt
+  type      String   // mint | transfer | forceTransfer
+  status    String   // pending | confirmed | failed
+  createdAt DateTime @default(now())
+
+  @@map("transactions")
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  blockNumber Int
+  logIndex    Int
+  txHash      String
+  eventName   String
+  data        Json
+  createdAt   DateTime @default(now())
+
+  @@map("events")
+}

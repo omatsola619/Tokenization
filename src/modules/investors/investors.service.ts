@@ -1,63 +1,87 @@
 import { blockchainService } from '../../services/blockchain.service';
-
-// Mock in-memory store (to be replaced with database later)
-const investors = new Map<string, any>();
+import { prisma } from '../../database/database.service';
 
 export class InvestorsService {
   async register(wallet: string, country: string, kycProviderId: string, metadata: any) {
-    if (investors.has(wallet)) {
+    const existing = await prisma.investor.findUnique({
+      where: { walletAddress: wallet },
+    });
+
+    if (existing) {
       throw { status: 409, message: 'wallet already registered' };
     }
 
-    // In a real scenario, we'd deploy an Identity contract for the user.
-    // For now, we use the wallet itself as identityAddress.
-    const identityAddress = wallet;
     const numericCountry = this.countryToNumeric(country);
 
-    // Note: We can uncomment the blockchain call when ready to test real on-chain reg
-    // await blockchainService.registerInvestor(wallet as `0x${string}`, identityAddress as `0x${string}`, numericCountry);
+    // ACTIVATE BLOCKCHAIN
+    await blockchainService.registerInvestor(
+      wallet as `0x${string}`, 
+      wallet as `0x${string}`, 
+      numericCountry
+    );
 
-    const investor = {
-      investorId: `inv_${Date.now()}`,
-      wallet,
-      country,
-      kycProviderId,
-      identityRegistered: true,
-      claims: [],
-      frozen: false,
-      metadata: metadata || {}
+    const investor = await prisma.investor.create({
+      data: {
+        walletAddress: wallet,
+        country,
+        kycProviderId,
+        identityRegistered: true,
+        metadata: metadata || {},
+      },
+    });
+
+    return {
+      ...investor,
+      wallet: investor.walletAddress, // maintain backward compatibility with tests
+      status: 'success'
     };
-
-    investors.set(wallet, investor);
-    return investor;
   }
 
   async getProfile(wallet: string) {
-    const investor = investors.get(wallet);
+    const investor = await prisma.investor.findUnique({
+      where: { walletAddress: wallet },
+      include: { claims: true }
+    });
+
     if (!investor) {
       throw { status: 404, message: 'investor not found' };
     }
-    return investor;
+
+    return {
+      ...investor,
+      wallet: investor.walletAddress,
+      claims: investor.claims.map(c => c.topic)
+    };
   }
 
   async exists(wallet: string): Promise<boolean> {
-    return investors.has(wallet);
+    const count = await prisma.investor.count({
+      where: { walletAddress: wallet }
+    });
+    return count > 0;
   }
 
   async linkWallet(identityWallet: string, newWallet: string) {
-    // Logic for linking
+    await prisma.wallet.create({
+      data: {
+        address: newWallet,
+        investorId: (await this.getProfile(identityWallet)).id,
+        isPrimary: false
+      }
+    });
     return { status: 'linked', identityWallet, newWallet };
   }
 
   async unlinkWallet(wallet: string) {
-    // Logic for unlinking
+    await prisma.wallet.delete({ where: { address: wallet } });
     return { status: 'unlinked', wallet };
   }
 
   async revoke(wallet: string) {
-    const investor = investors.get(wallet);
-    if (!investor) throw { status: 404, message: 'investor not found' };
-    investor.identityRegistered = false;
+    await prisma.investor.update({
+      where: { walletAddress: wallet },
+      data: { identityRegistered: false }
+    });
     return { status: 'revoked', wallet };
   }
 
