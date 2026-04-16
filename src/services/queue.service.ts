@@ -1,18 +1,18 @@
 import { Queue, QueueEvents } from 'bullmq';
 import IORedis from 'ioredis';
 
-// Redis connection — defaults to localhost:6379
-const connection = new IORedis({
-  host: process.env.REDIS_HOST || '127.0.0.1',
+// Redis connection config
+const redisConfig = {
+  host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379'),
   maxRetriesPerRequest: null, // Required by BullMQ
-});
+};
 
 // Main transaction queue
-export const txQueue = new Queue('blockchain-tx', { connection });
+export const txQueue = new Queue('blockchain-tx', { connection: redisConfig });
 
 // Queue events for monitoring
-export const txQueueEvents = new QueueEvents('blockchain-tx', { connection });
+export const txQueueEvents = new QueueEvents('blockchain-tx', { connection: redisConfig });
 
 export type TxJobType =
   | 'mint'
@@ -66,4 +66,4 @@ export async function getJobStatus(jobId: string) {
   };
 }
 
-export { connection as redisConnection };
+export const redisConnection = new IORedis(redisConfig);

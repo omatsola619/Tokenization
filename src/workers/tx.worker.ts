@@ -183,4 +183,8 @@ txWorker.on('failed', (job, err) => {
   console.error(`💀 Job ${job?.id} failed permanently:`, err.message);
 });
 
+export const runTxWorker = async () => {
+  console.log('📦 Transaction Worker listener active');
+};
+
 export { txWorker };
