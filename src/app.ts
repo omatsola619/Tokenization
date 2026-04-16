@@ -10,6 +10,8 @@ import { adminRouter } from './modules/admin/admin.routes';
 import { healthRouter } from './modules/health/health.routes';
 import { eventsRouter } from './modules/events/events.routes';
 import { transactionsRouter } from './modules/transactions/transactions.routes';
+import jobsRouter from './modules/jobs/jobs.routes';
+import portfolioRouter from './modules/portfolio/portfolio.routes';
 
 export const app = express();
 app.use(express.json());
@@ -27,6 +29,8 @@ app.use('/api/v1', adminRouter);
 app.use('/api/v1', healthRouter);
 app.use('/api/v1', eventsRouter);
 app.use('/api/v1', transactionsRouter);
+app.use('/api/v1/jobs', jobsRouter);
+app.use('/api/v1/portfolio', portfolioRouter);
 
 // Add more modules here:
 // app.use('/api/v1', claimsRouter);

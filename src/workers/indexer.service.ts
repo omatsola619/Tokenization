@@ -1,8 +1,8 @@
 import { prisma } from '../database/database.service';
 import { blockchainService } from '../services/blockchain.service';
-import { TokenABI, IdentityRegistryABI } from '../config/abis';
+import { TokenABI, IdentityRegistryABI, IdentityABI } from '../config/abis';
 import { config } from '../config';
-import { parseEventLogs, PublicClient } from 'viem';
+import { parseEventLogs, PublicClient, Log } from 'viem';
 import { withRetry } from '../common/retry';
 
 export class IndexerService {
@@ -41,7 +41,11 @@ export class IndexerService {
     console.log(`🔌 Syncing events from block ${startBlock} to ${latestBlock}...`);
 
     const logs = await withRetry(() => this.publicClient.getLogs({
-      address: [config.contracts.token, config.contracts.identityRegistry],
+      address: [
+        config.contracts.token, 
+        config.contracts.identityRegistry,
+        config.contracts.claimIssuer
+      ],
       fromBlock: startBlock,
       toBlock: latestBlock,
     }));
@@ -49,7 +53,7 @@ export class IndexerService {
     if (logs.length === 0) return;
 
     const parsedLogs = parseEventLogs({
-      abi: [...TokenABI, ...IdentityRegistryABI] as any,
+      abi: [...TokenABI, ...IdentityRegistryABI, ...IdentityABI] as any,
       logs: logs,
     });
 
@@ -104,6 +108,9 @@ export class IndexerService {
           break;
         case 'Unpaused':
           await this.handlePaused(false);
+          break;
+        case 'ClaimAdded':
+          await this.handleClaimAdded(parsed);
           break;
       }
     } catch (error) {
@@ -226,7 +233,37 @@ export class IndexerService {
       data: { isPaused },
     });
 
-    console.log(`⏸️ Token ${isPaused ? 'paused' : 'unpaused'}`);
+    console.log(`Paused: ${isPaused}`);
+  }
+
+  private async handleClaimAdded(parsed: any) {
+    const { claimId, topic, issuer } = parsed.args;
+    // The contract address that emitted this event (the Identity contract)
+    const identityAddress = parsed.address.toLowerCase();
+    
+    // Find the wallet/investor associated with this identity address
+    const wallet = await prisma.wallet.findFirst({
+      where: { 
+        identityAddress: { equals: identityAddress, mode: 'insensitive' } 
+      }
+    });
+
+    if (!wallet) {
+      console.warn(`⚠️ ClaimAdded for unknown identity: ${identityAddress}`);
+      return;
+    }
+
+    await prisma.claim.create({
+      data: {
+        wallet: wallet.address,
+        topic: topic.toString(),
+        claimId: claimId,
+        issuer: issuer,
+        status: 'active'
+      }
+    });
+
+    console.log(`📜 Claim synced for ${wallet.address}: Topic ${topic}`);
   }
 
   private stringifyBigInt(obj: any): any {

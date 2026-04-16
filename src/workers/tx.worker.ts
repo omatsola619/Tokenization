@@ -132,6 +132,21 @@ const txWorker = new Worker(
           result = { paused: false };
           break;
         }
+        
+        case 'addClaim': {
+          const { identityAddress, topic, scheme, issuer, uri } = params;
+          const receipt = await blockchainService.addClaim(
+            identityAddress as `0x${string}`,
+            BigInt(topic),
+            BigInt(scheme || 1),
+            issuer as `0x${string}`,
+            '0x' as `0x${string}`, // Signature (simplified for now)
+            '0x' as `0x${string}`, // Data
+            uri
+          );
+          result = { txHash: receipt.transactionHash };
+          break;
+        }
 
         default:
           throw new Error(`Unknown job type: ${type}`);

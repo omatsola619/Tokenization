@@ -10,7 +10,7 @@ export class ClaimsController {
       const claim = await claimsService.issue(wallet, topic, id, issuer);
       return res.status(201).json({
         status: 'issued',
-        claimId: claim.claimId,
+        claimId: claim.jobId,
         wallet: claim.wallet,
         topic: claim.topic,
       });

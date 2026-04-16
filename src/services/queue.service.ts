@@ -23,7 +23,8 @@ export type TxJobType =
   | 'unfreeze'
   | 'freezeTokens'
   | 'pause'
-  | 'unpause';
+  | 'unpause'
+  | 'addClaim';
 
 export interface TxJobData {
   type: TxJobType;

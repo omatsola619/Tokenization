@@ -13,5 +13,6 @@ export const config = {
     token: process.env.TOKEN_ADDRESS as `0x${string}`,
     identityRegistry: process.env.IDENTITY_REGISTRY_ADDRESS as `0x${string}`,
     compliance: process.env.COMPLIANCE_ADDRESS as `0x${string}`,
+    claimIssuer: process.env.CLAIM_ISSUER_ADDRESS as `0x${string}`,
   }
 };

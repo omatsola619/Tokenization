@@ -5,10 +5,12 @@ import { tokensService } from './tokens.service';
 export class TokensController {
   async mint(req: Request, res: Response, next: NextFunction) {
     try {
-      const { wallet, amount } = req.body;
+      const { wallet, target, amount } = req.body;
+      const targetWallet = wallet || target;
       if (!amount) return res.status(400).json({ error: 'amount is required' });
+      if (!targetWallet) return res.status(400).json({ error: 'wallet or target is required' });
       
-      const result = await tokensService.mint(wallet, amount);
+      const result = await tokensService.mint(targetWallet, amount);
       return res.status(202).json(result);
     } catch (error) {
       next(error);
@@ -17,8 +19,11 @@ export class TokensController {
 
   async batchMint(req: Request, res: Response, next: NextFunction) {
     try {
-      const { recipients } = req.body;
-      const result = await tokensService.batchMint(recipients);
+      const { recipients, investors } = req.body;
+      const targetRecipients = recipients || (investors ? (investors as any[]).map(i => ({ wallet: i.target, amount: i.amount })) : null);
+      if (!targetRecipients) return res.status(400).json({ error: 'recipients or investors required' });
+
+      const result = await tokensService.batchMint(targetRecipients);
       return res.status(202).json(result);
     } catch (error) {
       next(error);

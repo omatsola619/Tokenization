@@ -10,7 +10,7 @@ import {
 import { privateKeyToAccount } from 'viem/accounts';
 import { hardhat } from 'viem/chains';
 import { config } from '../config';
-import { TREXFactoryABI, TokenABI, IdentityRegistryABI } from '../config/abis';
+import { TREXFactoryABI, TokenABI, IdentityRegistryABI, IdentityABI } from '../config/abis';
 
 export class BlockchainService {
   private publicClient: PublicClient;
@@ -50,6 +50,32 @@ export class BlockchainService {
       functionName: 'registerIdentity',
       args: [walletAddress, identityAddress, country],
       account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Add a claim to an investor's Identity
+   */
+  async addClaim(
+    identityAddress: `0x${string}`, 
+    topic: bigint, 
+    scheme: bigint, 
+    issuer: `0x${string}`, 
+    signature: `0x${string}`, 
+    data: `0x${string}`, 
+    uri: string
+  ) {
+    const client = this.getWalletClient(this.issuerAccount);
+    
+    const { request } = await this.publicClient.simulateContract({
+      address: identityAddress,
+      abi: IdentityABI,
+      functionName: 'addClaim',
+      args: [topic, scheme, issuer, signature, data, uri],
+      account: this.issuerAccount,
     });
 
     const hash = await client.writeContract(request);

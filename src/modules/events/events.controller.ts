@@ -2,8 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { eventsService } from './events.service';
 
 export class EventsController {
-  getStatus(req: Request, res: Response) {
-    return res.status(200).json(eventsService.getStatus());
+  async getStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const status = await eventsService.getStatus();
+      return res.status(200).json(status);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async resync(req: Request, res: Response, next: NextFunction) {
