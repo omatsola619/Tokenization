@@ -87,6 +87,165 @@ export class BlockchainService {
   }
 
   /**
+   * Burn tokens from an address
+   */
+  async burnTokens(from: `0x${string}`, amount: bigint) {
+    const client = this.getWalletClient(this.agentAccount);
+
+    const { request } = await this.publicClient.simulateContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'burn',
+      args: [from, amount],
+      account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Freeze or unfreeze an address
+   */
+  async freezeAddress(wallet: `0x${string}`, freeze: boolean) {
+    const client = this.getWalletClient(this.agentAccount);
+
+    const { request } = await this.publicClient.simulateContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'setAddressFrozen',
+      args: [wallet, freeze],
+      account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Freeze partial tokens for an address
+   */
+  async freezePartialTokens(wallet: `0x${string}`, amount: bigint) {
+    const client = this.getWalletClient(this.agentAccount);
+
+    const { request } = await this.publicClient.simulateContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'freezePartialTokens',
+      args: [wallet, amount],
+      account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Unfreeze partial tokens for an address
+   */
+  async unfreezePartialTokens(wallet: `0x${string}`, amount: bigint) {
+    const client = this.getWalletClient(this.agentAccount);
+
+    const { request } = await this.publicClient.simulateContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'unfreezePartialTokens',
+      args: [wallet, amount],
+      account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Check if an address is frozen
+   */
+  async isFrozen(wallet: `0x${string}`): Promise<boolean> {
+    return await this.publicClient.readContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'isFrozen',
+      args: [wallet],
+    }) as boolean;
+  }
+
+  /**
+   * Get frozen token amount for an address
+   */
+  async getFrozenTokens(wallet: `0x${string}`): Promise<bigint> {
+    return await this.publicClient.readContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'getFrozenTokens',
+      args: [wallet],
+    }) as bigint;
+  }
+
+  /**
+   * Force transfer tokens (regulatory action)
+   */
+  async forceTransfer(from: `0x${string}`, to: `0x${string}`, amount: bigint) {
+    const client = this.getWalletClient(this.agentAccount);
+
+    const { request } = await this.publicClient.simulateContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'forcedTransfer',
+      args: [from, to, amount],
+      account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Pause the token
+   */
+  async pauseToken() {
+    const client = this.getWalletClient(this.agentAccount);
+
+    const { request } = await this.publicClient.simulateContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'pause',
+      account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Unpause the token
+   */
+  async unpauseToken() {
+    const client = this.getWalletClient(this.agentAccount);
+
+    const { request } = await this.publicClient.simulateContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'unpause',
+      account: this.agentAccount,
+    });
+
+    const hash = await client.writeContract(request);
+    return await this.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  /**
+   * Check if token is paused
+   */
+  async isPaused(): Promise<boolean> {
+    return await this.publicClient.readContract({
+      address: config.contracts.token,
+      abi: TokenABI,
+      functionName: 'paused',
+    }) as boolean;
+  }
+
+  /**
    * Get public client for custom operations
    */
   getPublicClient() {

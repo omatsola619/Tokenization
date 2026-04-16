@@ -19,6 +19,9 @@ describe('Transfer APIs', () => {
     });
 
     it('should return 422 when compliance pre-check fails', async () => {
+      const { blockchainService } = require('../../src/services/blockchain.service');
+      (blockchainService.canTransfer as jest.Mock).mockResolvedValueOnce([false, 1]);
+      
       const res = await request(app).post(`${BASE}/tokens/transfer`)
         .set('Authorization', 'Bearer jwt-investorA')
         .send({ from: '0xAAA', to: '0xUnregistered', amount: '50' });

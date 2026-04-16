@@ -3,6 +3,7 @@ import { blockchainService } from '../services/blockchain.service';
 import { TokenABI, IdentityRegistryABI } from '../config/abis';
 import { config } from '../config';
 import { parseEventLogs, PublicClient } from 'viem';
+import { withRetry } from '../common/retry';
 
 export class IndexerService {
   private publicClient: PublicClient;
@@ -39,11 +40,11 @@ export class IndexerService {
 
     console.log(`🔌 Syncing events from block ${startBlock} to ${latestBlock}...`);
 
-    const logs = await this.publicClient.getLogs({
+    const logs = await withRetry(() => this.publicClient.getLogs({
       address: [config.contracts.token, config.contracts.identityRegistry],
       fromBlock: startBlock,
       toBlock: latestBlock,
-    });
+    }));
 
     if (logs.length === 0) return;
 
@@ -88,6 +89,21 @@ export class IndexerService {
           break;
         case 'IdentityRegistered':
           await this.handleIdentityRegistered(parsed);
+          break;
+        case 'AddressFrozen':
+          await this.handleAddressFrozen(parsed);
+          break;
+        case 'TokensFrozen':
+          await this.handleTokensFrozen(parsed);
+          break;
+        case 'TokensUnfrozen':
+          await this.handleTokensUnfrozen(parsed);
+          break;
+        case 'Paused':
+          await this.handlePaused(true);
+          break;
+        case 'Unpaused':
+          await this.handlePaused(false);
           break;
       }
     } catch (error) {
@@ -165,6 +181,52 @@ export class IndexerService {
         },
       });
     });
+  }
+
+  private async handleAddressFrozen(parsed: any) {
+    const { _userAddress, _isFrozen } = parsed.args;
+
+    await prisma.investor.updateMany({
+      where: { walletAddress: _userAddress },
+      data: { frozen: _isFrozen },
+    });
+
+    console.log(`🧊 Address ${_userAddress} frozen=${_isFrozen}`);
+  }
+
+  private async handleTokensFrozen(parsed: any) {
+    const { _userAddress, _amount } = parsed.args;
+    const amount = BigInt(_amount);
+
+    await prisma.balance.upsert({
+      where: { wallet: _userAddress },
+      update: { frozen: { increment: amount } },
+      create: { wallet: _userAddress, amount: BigInt(0), frozen: amount },
+    });
+
+    console.log(`🔒 ${amount} tokens frozen for ${_userAddress}`);
+  }
+
+  private async handleTokensUnfrozen(parsed: any) {
+    const { _userAddress, _amount } = parsed.args;
+    const amount = BigInt(_amount);
+
+    await prisma.balance.upsert({
+      where: { wallet: _userAddress },
+      update: { frozen: { decrement: amount } },
+      create: { wallet: _userAddress, amount: BigInt(0), frozen: BigInt(0) },
+    });
+
+    console.log(`🔓 ${amount} tokens unfrozen for ${_userAddress}`);
+  }
+
+  private async handlePaused(isPaused: boolean) {
+    // Update all token configs — in our single-token setup, update the first one
+    await prisma.tokenConfig.updateMany({
+      data: { isPaused },
+    });
+
+    console.log(`⏸️ Token ${isPaused ? 'paused' : 'unpaused'}`);
   }
 
   private stringifyBigInt(obj: any): any {

@@ -1,5 +1,5 @@
-// Mock in-memory agents store
-const agentsStore = new Map<string, string>();
+import { prisma } from '../../database/database.service';
+
 const VALID_ROLES = ['MINT_AGENT', 'IDENTITY_AGENT', 'CLAIM_AGENT'];
 
 export class AgentsService {
@@ -7,21 +7,24 @@ export class AgentsService {
     if (!VALID_ROLES.includes(role)) {
       throw { status: 400, message: 'invalid role' };
     }
-    agentsStore.set(wallet, role);
-    return { wallet, role };
+
+    const agent = await prisma.agent.upsert({
+      where: { wallet },
+      update: { role },
+      create: { wallet, role },
+    });
+
+    return { wallet: agent.wallet, role: agent.role };
   }
 
   async removeAgent(wallet: string) {
-    agentsStore.delete(wallet);
+    await prisma.agent.delete({ where: { wallet } });
     return { status: 'removed', wallet };
   }
 
   async getAllAgents() {
-    const agents: any[] = [];
-    agentsStore.forEach((role, wallet) => {
-      agents.push({ wallet, role });
-    });
-    return agents;
+    const agents = await prisma.agent.findMany();
+    return agents.map(a => ({ wallet: a.wallet, role: a.role }));
   }
 }
 

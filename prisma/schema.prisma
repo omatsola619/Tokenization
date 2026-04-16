@@ -94,3 +94,19 @@ model Balance {
 
   @@map("balances")
 }
+
+model Agent {
+  wallet    String   @id
+  role      String   // MINT_AGENT | IDENTITY_AGENT | CLAIM_AGENT
+  createdAt DateTime @default(now())
+
+  @@map("agents")
+}
+
+model TrustedIssuer {
+  wallet    String   @id
+  topics    String[] // Array of claim topics this issuer is trusted for
+  createdAt DateTime @default(now())
+
+  @@map("trusted_issuers")
+}

@@ -2,12 +2,14 @@ import { Request, Response } from 'express';
 import { healthService } from './health.service';
 
 export class HealthController {
-  getApiHealth(req: Request, res: Response) {
-    return res.status(200).json(healthService.getApiHealth());
+  async getApiHealth(req: Request, res: Response) {
+    const health = await healthService.getApiHealth();
+    return res.status(200).json(health);
   }
 
-  getBlockchainHealth(req: Request, res: Response) {
-    return res.status(200).json(healthService.getBlockchainHealth());
+  async getBlockchainHealth(req: Request, res: Response) {
+    const health = await healthService.getBlockchainHealth();
+    return res.status(200).json(health);
   }
 }
 

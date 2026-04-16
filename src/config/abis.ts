@@ -29,6 +29,7 @@ export const TREXFactoryABI = [
 ] as const;
 
 export const TokenABI = [
+  // --- Minting ---
   {
     inputs: [{ internalType: 'address', name: '_to', type: 'address' }, { internalType: 'uint256', name: '_amount', type: 'uint256' }],
     name: 'mint',
@@ -36,6 +37,15 @@ export const TokenABI = [
     stateMutability: 'nonpayable',
     type: 'function'
   },
+  // --- Burning ---
+  {
+    inputs: [{ internalType: 'address', name: '_userAddress', type: 'address' }, { internalType: 'uint256', name: '_amount', type: 'uint256' }],
+    name: 'burn',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  // --- Balance ---
   {
     inputs: [{ internalType: 'address', name: '_userAddress', type: 'address' }],
     name: 'balanceOf',
@@ -43,6 +53,7 @@ export const TokenABI = [
     stateMutability: 'view',
     type: 'function'
   },
+  // --- Transfer Simulation ---
   {
     inputs: [
       { internalType: 'address', name: '_from', type: 'address' },
@@ -54,6 +65,86 @@ export const TokenABI = [
     stateMutability: 'view',
     type: 'function'
   },
+  // --- Forced Transfer (Regulatory) ---
+  {
+    inputs: [
+      { internalType: 'address', name: '_from', type: 'address' },
+      { internalType: 'address', name: '_to', type: 'address' },
+      { internalType: 'uint256', name: '_amount', type: 'uint256' }
+    ],
+    name: 'forcedTransfer',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  // --- Freeze / Unfreeze ---
+  {
+    inputs: [
+      { internalType: 'address', name: '_userAddress', type: 'address' },
+      { internalType: 'bool', name: '_freeze', type: 'bool' }
+    ],
+    name: 'setAddressFrozen',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: '_userAddress', type: 'address' },
+      { internalType: 'uint256', name: '_amount', type: 'uint256' }
+    ],
+    name: 'freezePartialTokens',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: '_userAddress', type: 'address' },
+      { internalType: 'uint256', name: '_amount', type: 'uint256' }
+    ],
+    name: 'unfreezePartialTokens',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_userAddress', type: 'address' }],
+    name: 'isFrozen',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_userAddress', type: 'address' }],
+    name: 'getFrozenTokens',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  // --- Pause / Unpause ---
+  {
+    inputs: [],
+    name: 'pause',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'unpause',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'paused',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  // --- Events ---
   {
     anonymous: false,
     inputs: [
@@ -62,6 +153,50 @@ export const TokenABI = [
       { indexed: false, internalType: 'uint256', name: 'value', type: 'uint256' }
     ],
     name: 'Transfer',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: '_userAddress', type: 'address' },
+      { indexed: false, internalType: 'bool', name: '_isFrozen', type: 'bool' },
+      { indexed: true, internalType: 'address', name: '_owner', type: 'address' }
+    ],
+    name: 'AddressFrozen',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: '_userAddress', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: '_amount', type: 'uint256' }
+    ],
+    name: 'TokensFrozen',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: '_userAddress', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: '_amount', type: 'uint256' }
+    ],
+    name: 'TokensUnfrozen',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: '_addr', type: 'address' }
+    ],
+    name: 'Paused',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'address', name: '_addr', type: 'address' }
+    ],
+    name: 'Unpaused',
     type: 'event'
   }
 ] as const;

@@ -1,7 +1,11 @@
+import { blockchainService } from '../../services/blockchain.service';
 import { prisma } from '../../database/database.service';
 
 export class ComplianceService {
   async freeze(wallet: string) {
+    // Call blockchain to freeze the address on-chain
+    await blockchainService.freezeAddress(wallet as `0x${string}`, true);
+
     await prisma.investor.update({
       where: { walletAddress: wallet },
       data: { frozen: true }
@@ -10,6 +14,9 @@ export class ComplianceService {
   }
 
   async unfreeze(wallet: string) {
+    // Call blockchain to unfreeze the address on-chain
+    await blockchainService.freezeAddress(wallet as `0x${string}`, false);
+
     await prisma.investor.update({
       where: { walletAddress: wallet },
       data: { frozen: false }
@@ -18,17 +25,16 @@ export class ComplianceService {
   }
 
   async freezeTokens(wallet: string, amount: string) {
-    const investor = await prisma.investor.findUnique({ where: { walletAddress: wallet } });
-    const meta = (investor?.metadata as any) || {};
-    
-    await prisma.investor.update({
-      where: { walletAddress: wallet },
-      data: {
-        metadata: {
-          ...meta,
-          frozenAmount: amount
-        }
-      }
+    const amountBI = BigInt(amount);
+
+    // Call blockchain to freeze partial tokens on-chain
+    await blockchainService.freezePartialTokens(wallet as `0x${string}`, amountBI);
+
+    // Update frozen amount in the balance table
+    await prisma.balance.upsert({
+      where: { wallet },
+      update: { frozen: amountBI },
+      create: { wallet, amount: BigInt(0), frozen: amountBI },
     });
 
     return { wallet, frozenAmount: amount };
@@ -40,12 +46,24 @@ export class ComplianceService {
     });
     if (!investor) throw { status: 404, message: 'investor not found' };
 
-    const meta = (investor.metadata as any) || {};
+    // Get real frozen status and frozen token amount from blockchain
+    let frozen = investor.frozen;
+    let frozenTokens = '0';
+
+    try {
+      frozen = await blockchainService.isFrozen(wallet as `0x${string}`);
+      const frozenAmount = await blockchainService.getFrozenTokens(wallet as `0x${string}`);
+      frozenTokens = frozenAmount.toString();
+    } catch {
+      // Fallback to DB values if blockchain is unavailable
+      const balance = await prisma.balance.findUnique({ where: { wallet } });
+      frozenTokens = (balance?.frozen ?? BigInt(0)).toString();
+    }
 
     return {
       wallet: investor.walletAddress,
-      frozen: investor.frozen,
-      frozenTokens: meta.frozenAmount || '0'
+      frozen,
+      frozenTokens
     };
   }
 }

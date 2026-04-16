@@ -32,6 +32,7 @@ export class InvestorsService {
 
     return {
       ...investor,
+      investorId: investor.id,
       wallet: investor.walletAddress, // maintain backward compatibility with tests
       status: 'success'
     };

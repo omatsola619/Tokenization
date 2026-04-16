@@ -2,6 +2,7 @@ import { blockchainService } from '../../services/blockchain.service';
 import { prisma } from '../../database/database.service';
 import { investorsService } from '../investors/investors.service';
 import { config as appConfig } from '../../config';
+import { parseTransferReasonCode } from '../../common/retry';
 
 export class TokensService {
   private async getConfigFromDb() {
@@ -17,11 +18,14 @@ export class TokensService {
         isPaused: false
       };
     }
-    return config;
+    return {
+      ...config,
+      totalSupply: config.totalSupply.toString(),
+    };
   }
 
   async deploy(name: string, symbol: string, decimals: number, complianceModule: string) {
-    const config = await prisma.tokenConfig.upsert({
+    const tokenConfig = await prisma.tokenConfig.upsert({
       where: { address: appConfig.contracts.token }, // For now we assume a single token
       update: { name, symbol, decimals },
       create: {
@@ -31,7 +35,13 @@ export class TokensService {
         decimals
       }
     });
-    return config;
+    return {
+      ...tokenConfig,
+      tokenAddress: appConfig.contracts.token,
+      identityRegistry: appConfig.contracts.identityRegistry,
+      complianceContract: appConfig.contracts.compliance,
+      totalSupply: tokenConfig.totalSupply.toString(),
+    };
   }
 
   async getConfig() {
@@ -93,16 +103,36 @@ export class TokensService {
   }
 
   async burn(wallet: string, amount: string) {
-    // Logic for burn
-    return { status: 'burned', wallet, amount };
+    const amountBI = BigInt(amount);
+
+    // Call blockchain to burn tokens
+    const receipt = await blockchainService.burnTokens(wallet as `0x${string}`, amountBI);
+
+    const tx = await prisma.transaction.create({
+      data: {
+        txHash: receipt.transactionHash,
+        from: wallet,
+        to: '0x0000000000000000000000000000000000000000',
+        amount: amountBI,
+        type: 'burn',
+        status: 'confirmed',
+      },
+    });
+
+    return {
+      status: 'burned',
+      txHash: tx.txHash,
+      wallet,
+      amount,
+    };
   }
 
   async transfer(from: string, to: string, amount: string) {
     const amountBI = BigInt(amount);
-    // ACTIVATE BLOCKCHAIN CHECK
-    const canTransfer = await blockchainService.canTransfer(from as `0x${string}`, to as `0x${string}`, amountBI);
-    if (!canTransfer) {
-      throw { status: 422, message: 'compliance check failed: on-chain validation failed' };
+    // Pre-flight compliance check
+    const [allowed, reasonCode] = await blockchainService.canTransfer(from as `0x${string}`, to as `0x${string}`, amountBI) as [boolean, number];
+    if (!allowed) {
+      throw { status: 422, message: `compliance check failed: ${parseTransferReasonCode(reasonCode)}` };
     }
 
     const tx = await prisma.transaction.create({
@@ -134,31 +164,27 @@ export class TokensService {
   }
 
   async simulateTransfer(from: string, to: string, amount: string) {
-    // ACTIVATE BLOCKCHAIN SIMULATION
     try {
-      const canTransfer = await blockchainService.canTransfer(from as `0x${string}`, to as `0x${string}`, BigInt(amount));
+      const [allowed, reasonCode] = await blockchainService.canTransfer(from as `0x${string}`, to as `0x${string}`, BigInt(amount)) as [boolean, number];
       return {
-        canTransfer,
-        reason: canTransfer ? 'Success' : 'Compliance or Balance check failed on-chain'
+        canTransfer: allowed,
+        reasonCode,
+        reason: allowed ? 'Transfer is compliant' : parseTransferReasonCode(reasonCode)
       };
     } catch (error) {
-       return {
+      return {
         canTransfer: false,
+        reasonCode: -1,
         reason: 'Simulation error: check identity and balance'
       };
     }
   }
 
   async getBalance(wallet: string) {
-    const aggregate = await prisma.transaction.aggregate({
-      where: { to: wallet, type: 'mint' },
-      _sum: { amount: true }
+    const balance = await prisma.balance.findUnique({
+      where: { wallet },
     });
-    
-    // Use type casting to resolve Prisma 7 aggregate typing issues if necessary, 
-    // but first ensure we handle the null case.
-    const sum = (aggregate._sum as any)?.amount || BigInt(0);
-    return sum.toString();
+    return (balance?.amount ?? BigInt(0)).toString();
   }
 }
 

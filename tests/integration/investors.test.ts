@@ -10,12 +10,12 @@ describe('Investor Identity APIs', () => {
   describe('POST /investors/register', () => {
     it('should return 201 with investorId on valid registration', async () => {
       const res = await request(app).post(`${BASE}/investors/register`)
-        .send({ wallet: '0xInvestorA', country: 'GB', kycProviderId: 'sumsub_123', metadata: {} });
+        .send({ wallet: '0xNewInvestorReg', country: 'GB', kycProviderId: 'sumsub_123', metadata: {} });
 
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty('status', 'success');
       expect(res.body).toHaveProperty('investorId');
-      expect(res.body).toHaveProperty('wallet', '0xInvestorA');
+      expect(res.body).toHaveProperty('wallet', '0xNewInvestorReg');
     });
 
     it('should return 400 when wallet is missing', async () => {

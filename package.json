@@ -10,12 +10,15 @@
     "test:integration": "jest --config ./jest.config.json tests/integration --runInBand",
     "test:e2e": "jest --config ./jest.e2e.json tests/e2e --runInBand",
     "blockchain:setup": "concurrently \"npx hardhat node\" \"wait-on tcp:8545 && cd ERC-3643 && npx hardhat run scripts/deploy-trex.ts --network localhost && ts-node ../scripts/sync-env.ts\"",
-    "worker:indexer": "ts-node src/workers/indexer.ts"
+    "worker:indexer": "ts-node src/workers/indexer.ts",
+    "worker:tx": "ts-node -e \"import './src/workers/tx.worker'\""
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
-    "express": "^4.19.2"
+    "bullmq": "^5.74.0",
+    "express": "^4.19.2",
+    "ioredis": "^5.10.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

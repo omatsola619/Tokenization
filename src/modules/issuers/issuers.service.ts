@@ -1,23 +1,24 @@
-// Mock in-memory trusted issuers store
-const trustedIssuers = new Map<string, string[]>();
+import { prisma } from '../../database/database.service';
 
 export class IssuersService {
   async addTrusted(issuerWallet: string, topics: string[]) {
-    trustedIssuers.set(issuerWallet, topics);
-    return { issuerWallet, topics };
+    const issuer = await prisma.trustedIssuer.upsert({
+      where: { wallet: issuerWallet },
+      update: { topics },
+      create: { wallet: issuerWallet, topics },
+    });
+
+    return { issuerWallet: issuer.wallet, topics: issuer.topics };
   }
 
   async removeTrusted(issuerWallet: string) {
-    trustedIssuers.delete(issuerWallet);
+    await prisma.trustedIssuer.delete({ where: { wallet: issuerWallet } });
     return { status: 'removed', issuerWallet };
   }
 
   async getAllTrusted() {
-    const issuers: any[] = [];
-    trustedIssuers.forEach((topics, wallet) => {
-      issuers.push({ wallet, topics });
-    });
-    return issuers;
+    const issuers = await prisma.trustedIssuer.findMany();
+    return issuers.map(i => ({ wallet: i.wallet, topics: i.topics }));
   }
 }
 

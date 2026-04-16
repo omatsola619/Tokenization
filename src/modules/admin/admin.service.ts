@@ -1,14 +1,24 @@
+import { blockchainService } from '../../services/blockchain.service';
 import { prisma } from '../../database/database.service';
 import { config } from '../../config';
 
 export class AdminService {
   async forceTransfer(from: string, to: string, amount: string) {
+    const amountBI = BigInt(amount);
+
+    // Call blockchain for the regulatory forced transfer
+    const receipt = await blockchainService.forceTransfer(
+      from as `0x${string}`,
+      to as `0x${string}`,
+      amountBI
+    );
+
     const tx = await prisma.transaction.create({
       data: {
-        txHash: `0x_force_${Math.random().toString(16).slice(2, 66)}`,
+        txHash: receipt.transactionHash,
         from,
         to,
-        amount: BigInt(amount),
+        amount: amountBI,
         type: 'forceTransfer',
         status: 'confirmed'
       }
@@ -23,24 +33,47 @@ export class AdminService {
   }
 
   async pause() {
-    await prisma.tokenConfig.update({
+    // Call blockchain to pause the token on-chain
+    await blockchainService.pauseToken();
+
+    await prisma.tokenConfig.upsert({
       where: { address: config.contracts.token },
-      data: { isPaused: true }
+      update: { isPaused: true },
+      create: {
+        address: config.contracts.token,
+        name: 'Token',
+        symbol: 'TKN',
+        isPaused: true,
+      }
     });
     return { paused: true };
   }
 
   async unpause() {
-    await prisma.tokenConfig.update({
+    // Call blockchain to unpause the token on-chain
+    await blockchainService.unpauseToken();
+
+    await prisma.tokenConfig.upsert({
       where: { address: config.contracts.token },
-      data: { isPaused: false }
+      update: { isPaused: false },
+      create: {
+        address: config.contracts.token,
+        name: 'Token',
+        symbol: 'TKN',
+        isPaused: false,
+      }
     });
     return { paused: false };
   }
 
   async isPaused() {
-    const config = await prisma.tokenConfig.findFirst();
-    return config?.isPaused || false;
+    // Read real paused status from blockchain, fallback to DB
+    try {
+      return await blockchainService.isPaused();
+    } catch {
+      const tokenConfig = await prisma.tokenConfig.findFirst();
+      return tokenConfig?.isPaused || false;
+    }
   }
 }
 
