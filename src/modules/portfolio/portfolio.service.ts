@@ -21,19 +21,21 @@ export class PortfolioService {
     const tokenConfig = await prisma.tokenConfig.findFirst() || {
       symbol: 'TKN',
       name: 'Token',
-      decimals: 18
+      decimals: 18,
+      address: '0x0000000000000000000000000000000000000000'
     };
 
     return {
+      wallet: investor.walletAddress,
       investor: {
-        wallet: investor.walletAddress,
         country: investor.country,
         identityAddress: investor.identityAddress,
         identityRegistered: investor.identityRegistered,
         frozen: investor.frozen
       },
-      portfolio: [
+      holdings: [
         {
+          tokenAddress: tokenConfig.address,
           symbol: tokenConfig.symbol,
           name: tokenConfig.name,
           balance: (balance?.amount ?? BigInt(0)).toString(),
