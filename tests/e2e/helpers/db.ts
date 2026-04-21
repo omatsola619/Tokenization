@@ -1,27 +1,33 @@
+import { prisma } from '../../../src/database/database.service';
+
 /**
- * Mocking utility to get access to the database layer during E2E testing to assert state.
- * 
- * E.g., if using TypeORM, return the active connection repositories.
- * If using Prisma, return the PrismaClient instance.
+ * Utility to provide access to the real database layer during E2E testing.
  */
 export function getDbClient() {
-  // Placeholder implementation - Replace with your actual DB connection setup
-  // const prisma = new PrismaClient();
-  // return prisma;
-  
-  return {
-    investors: {
-      findOne: async (query: any) => ({ status: 'ELIGIBLE', identityAddress: '0xIdentity', ...query })
-    },
-    balances: {
-      findOne: async (query: any) => ({ amount: 1000, ...query })
-    },
-    transfers: {
-      findOne: async (query: any) => ({ status: 'CONFIRMED', ...query })
-    },
-    eventLogs: {
-      find: async (query: any) => [{ eventName: 'Transfer', rawEventData: '0x...', ...query }]
-    },
-    disconnect: async () => { /* Close DB connection */ }
-  };
+  return prisma;
+}
+
+/**
+ * Truncates all relevant tables to ensure a clean state for E2E tests.
+ */
+export async function clearDatabase() {
+  const tableNames = [
+    'trusted_issuers',
+    'agents',
+    'claims',
+    'balances',
+    'transactions',
+    'wallets',
+    'investors',
+    'events',
+    'tokens', // TokenConfig
+  ];
+
+  for (const tableName of tableNames) {
+    try {
+      await prisma.$executeRawUnsafe(`TRUNCATE TABLE "${tableName}" CASCADE;`);
+    } catch (error) {
+       console.error(`Failed to truncate ${tableName}:`, (error as Error).message);
+    }
+  }
 }
