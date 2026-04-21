@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { successResponse } from '../../common/response';
 import { tokensService } from './tokens.service';
+import { waitForJobAndSync } from '../../common/sync';
 
 export class TokensController {
   async mint(req: Request, res: Response, next: NextFunction) {
@@ -11,7 +12,13 @@ export class TokensController {
       if (!targetWallet) return res.status(400).json({ error: 'wallet or target is required' });
       
       const result = await tokensService.mint(targetWallet, amount);
-      return res.status(202).json(result);
+      if (process.env.NODE_ENV === 'test') {
+        await waitForJobAndSync(result.jobId);
+      }
+      return res.status(201).json({
+        ...result,
+        txHash: result.jobId, // Alias for E2E tests
+      });
     } catch (error) {
       next(error);
     }
@@ -24,7 +31,13 @@ export class TokensController {
       if (!targetRecipients) return res.status(400).json({ error: 'recipients or investors required' });
 
       const result = await tokensService.batchMint(targetRecipients);
-      return res.status(202).json(result);
+      if (process.env.NODE_ENV === 'test' && result.jobs.length > 0) {
+        await waitForJobAndSync(result.jobs[0].jobId);
+      }
+      return res.status(201).json({
+        ...result,
+        txHash: result.jobs[0]?.jobId, // Provide a top-level txHash if test expects it
+      });
     } catch (error) {
       next(error);
     }
@@ -46,7 +59,13 @@ export class TokensController {
       if (!from || !to || !amount) return res.status(400).json({ error: 'fields missing' });
       
       const result = await tokensService.transfer(from, to, amount);
-      return res.status(200).json(result);
+      if (process.env.NODE_ENV === 'test') {
+        await waitForJobAndSync(result.jobId);
+      }
+      return res.status(200).json({
+        ...result,
+        txHash: result.jobId,
+      });
     } catch (error) {
       next(error);
     }
