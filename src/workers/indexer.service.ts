@@ -4,6 +4,7 @@ import { TokenABI, IdentityRegistryABI, IdentityABI } from '../config/abis';
 import { config } from '../config';
 import { parseEventLogs, PublicClient, Log } from 'viem';
 import { withRetry } from '../common/retry';
+import { formatAddress } from '../common/address';
 
 export class IndexerService {
   private publicClient: PublicClient;
@@ -15,6 +16,7 @@ export class IndexerService {
 
   async start() {
     console.log('🔄 Indexer starting continuous sync...');
+    const interval = process.env.NODE_ENV === 'test' ? 500 : 5000;
     setInterval(async () => {
       if (this.isIndexing) return;
       try {
@@ -25,7 +27,7 @@ export class IndexerService {
       } finally {
         this.isIndexing = false;
       }
-    }, 5000);
+    }, interval);
   }
 
   private async sync() {
@@ -119,13 +121,15 @@ export class IndexerService {
   }
 
   private async handleTransfer(parsed: any) {
-    const { from, to, value } = parsed.args;
+    const { from: rawFrom, to: rawTo, value } = parsed.args;
+    const from = formatAddress(rawFrom);
+    const to = formatAddress(rawTo);
     const amount = BigInt(value);
     const txHash = parsed.transactionHash!;
 
     await prisma.$transaction(async (tx) => {
       // Update Recipient Balance
-      if (to !== '0x0000000000000000000000000000000000000000') {
+      if (rawTo !== '0x0000000000000000000000000000000000000000') {
         await tx.balance.upsert({
           where: { wallet: to },
           update: { amount: { increment: amount } },
@@ -134,7 +138,7 @@ export class IndexerService {
       }
 
       // Update Sender Balance
-      if (from !== '0x0000000000000000000000000000000000000000') {
+      if (rawFrom !== '0x0000000000000000000000000000000000000000') {
         await tx.balance.upsert({
           where: { wallet: from },
           update: { amount: { decrement: amount } },
@@ -151,7 +155,7 @@ export class IndexerService {
           from,
           to,
           amount,
-          type: from === '0x0000000000000000000000000000000000000000' ? 'mint' : 'transfer',
+          type: rawFrom === '0x0000000000000000000000000000000000000000' ? 'mint' : 'transfer',
           status: 'confirmed',
         },
       });
@@ -159,7 +163,8 @@ export class IndexerService {
   }
 
   private async handleIdentityRegistered(parsed: any) {
-    const { investor, identity, country } = parsed.args;
+    const { investor: rawInvestor, identity, country } = parsed.args;
+    const investor = formatAddress(rawInvestor);
 
     await prisma.$transaction(async (tx) => {
       await tx.investor.upsert({
@@ -192,26 +197,28 @@ export class IndexerService {
 
   private async handleAddressFrozen(parsed: any) {
     const { _userAddress, _isFrozen } = parsed.args;
+    const wallet = formatAddress(_userAddress);
 
     await prisma.investor.updateMany({
-      where: { walletAddress: _userAddress },
+      where: { walletAddress: wallet },
       data: { frozen: _isFrozen },
     });
 
-    console.log(`🧊 Address ${_userAddress} frozen=${_isFrozen}`);
+    console.log(`🧊 Address ${wallet} frozen=${_isFrozen}`);
   }
 
   private async handleTokensFrozen(parsed: any) {
     const { _userAddress, _amount } = parsed.args;
+    const wallet = formatAddress(_userAddress);
     const amount = BigInt(_amount);
 
     await prisma.balance.upsert({
-      where: { wallet: _userAddress },
+      where: { wallet },
       update: { frozen: { increment: amount } },
-      create: { wallet: _userAddress, amount: BigInt(0), frozen: amount },
+      create: { wallet, amount: BigInt(0), frozen: amount },
     });
 
-    console.log(`🔒 ${amount} tokens frozen for ${_userAddress}`);
+    console.log(`🔒 ${amount} tokens frozen for ${wallet}`);
   }
 
   private async handleTokensUnfrozen(parsed: any) {
@@ -255,15 +262,15 @@ export class IndexerService {
 
     await prisma.claim.create({
       data: {
-        wallet: wallet.address,
+        wallet: formatAddress(wallet.address), // Ensure it uses the formatted version if different
         topic: topic.toString(),
         claimId: claimId,
-        issuer: issuer,
+        issuer: formatAddress(issuer),
         status: 'active'
       }
     });
 
-    console.log(`📜 Claim synced for ${wallet.address}: Topic ${topic}`);
+    console.log(`📜 Claim synced for ${formatAddress(wallet.address)}: Topic ${topic}`);
   }
 
   private stringifyBigInt(obj: any): any {

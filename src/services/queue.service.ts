@@ -3,16 +3,59 @@ import IORedis from 'ioredis';
 
 // Redis connection config
 const redisConfig = {
-  host: process.env.REDIS_HOST || 'localhost',
+  host: process.env.REDIS_HOST || '127.0.0.1',
   port: parseInt(process.env.REDIS_PORT || '6379'),
   maxRetriesPerRequest: null, // Required by BullMQ
+  lazyConnect: true,
 };
 
-// Main transaction queue
-export const txQueue = new Queue('blockchain-tx', { connection: redisConfig });
+/**
+ * Main Redis connection for the application.
+ */
+export const redisConnection = new IORedis(redisConfig);
+redisConnection.on('error', (err) => {
+  if (process.env.NODE_ENV === 'test') return;
+  console.error('Redis connection error:', err.message);
+});
 
-// Queue events for monitoring
-export const txQueueEvents = new QueueEvents('blockchain-tx', { connection: redisConfig });
+// Lazy-initialized Queue and Events
+let _txQueue: Queue | null = null;
+let _txQueueEvents: QueueEvents | null = null;
+
+export const getTxQueue = () => {
+  if (!_txQueue) {
+    _txQueue = new Queue('blockchain-tx', { 
+      connection: redisConnection,
+      defaultJobOptions: {
+        removeOnComplete: true,
+        removeOnFail: false,
+      }
+    });
+  }
+  return _txQueue;
+};
+
+export const getTxQueueEvents = () => {
+  if (!_txQueueEvents) {
+    _txQueueEvents = new QueueEvents('blockchain-tx', { 
+      connection: redisConnection 
+    });
+  }
+  return _txQueueEvents;
+};
+
+// For backward compatibility with existing imports
+export const txQueue = new Proxy({} as Queue, {
+  get: (target, prop) => {
+    return (getTxQueue() as any)[prop];
+  }
+});
+
+export const txQueueEvents = new Proxy({} as QueueEvents, {
+  get: (target, prop) => {
+    return (getTxQueueEvents() as any)[prop];
+  }
+});
 
 export type TxJobType =
   | 'mint'
@@ -36,7 +79,7 @@ export interface TxJobData {
  * Returns immediately with a jobId.
  */
 export async function addTxJob(type: TxJobType, params: Record<string, any>): Promise<string> {
-  const job = await txQueue.add(type, { type, params } as TxJobData, {
+  const job = await getTxQueue().add(type, { type, params } as TxJobData, {
     attempts: 3,
     backoff: { type: 'exponential', delay: 2000 },
     removeOnComplete: { count: 1000 }, // Keep last 1000 completed jobs
@@ -51,7 +94,7 @@ export async function addTxJob(type: TxJobType, params: Record<string, any>): Pr
  * Get the status of a job by its ID.
  */
 export async function getJobStatus(jobId: string) {
-  const job = await txQueue.getJob(jobId);
+  const job = await getTxQueue().getJob(jobId);
   if (!job) return null;
 
   const state = await job.getState();
@@ -65,5 +108,3 @@ export async function getJobStatus(jobId: string) {
     timestamp: job.timestamp,
   };
 }
-
-export const redisConnection = new IORedis(redisConfig);

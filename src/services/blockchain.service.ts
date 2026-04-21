@@ -9,6 +9,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { hardhat } from 'viem/chains';
+import { resolveAddress } from '../common/address';
 import { config } from '../config';
 import { TREXFactoryABI, TokenABI, IdentityRegistryABI, IdentityABI } from '../config/abis';
 
@@ -41,189 +42,250 @@ export class BlockchainService {
   /**
    * Register an investor on-chain
    */
-  async registerInvestor(walletAddress: `0x${string}`, identityAddress: `0x${string}`, country: number) {
+  async registerInvestor(walletAddress: string, identityAddress: string, country: number) {
     const client = this.getWalletClient(this.agentAccount);
+    const resolvedWallet = resolveAddress(walletAddress);
+    const resolvedIdentity = resolveAddress(identityAddress);
     
-    const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.identityRegistry,
-      abi: IdentityRegistryABI,
-      functionName: 'registerIdentity',
-      args: [walletAddress, identityAddress, country],
-      account: this.agentAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: config.contracts.identityRegistry,
+        abi: IdentityRegistryABI,
+        functionName: 'registerIdentity',
+        args: [resolvedWallet, resolvedIdentity, country],
+        account: this.agentAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain registerInvestor failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
    * Add a claim to an investor's Identity
    */
   async addClaim(
-    identityAddress: `0x${string}`, 
+    identityAddress: string, 
     topic: bigint, 
     scheme: bigint, 
-    issuer: `0x${string}`, 
+    issuer: string, 
     signature: `0x${string}`, 
     data: `0x${string}`, 
     uri: string
   ) {
     const client = this.getWalletClient(this.issuerAccount);
+    const resolvedIdentity = resolveAddress(identityAddress);
+    const resolvedIssuer = resolveAddress(issuer);
     
-    const { request } = await this.publicClient.simulateContract({
-      address: identityAddress,
-      abi: IdentityABI,
-      functionName: 'addClaim',
-      args: [topic, scheme, issuer, signature, data, uri],
-      account: this.issuerAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: resolvedIdentity,
+        abi: IdentityABI,
+        functionName: 'addClaim',
+        args: [topic, scheme, resolvedIssuer, signature, data, uri],
+        account: this.issuerAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain addClaim failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
    * Mint tokens to an investor
    */
-  async mintTokens(to: `0x${string}`, amount: bigint) {
+  async mintTokens(to: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
+    const resolvedTo = resolveAddress(to);
 
-    const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'mint',
-      args: [to, amount],
-      account: this.agentAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: config.contracts.token,
+        abi: TokenABI,
+        functionName: 'mint',
+        args: [resolvedTo, amount],
+        account: this.agentAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain mintTokens failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
    * Check if a transfer is compliant
    */
-  async canTransfer(from: `0x${string}`, to: `0x${string}`, amount: bigint) {
-    return await this.publicClient.readContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'canTransfer',
-      args: [from, to, amount],
-    });
+  async canTransfer(from: string, to: string, amount: bigint): Promise<[boolean, number]> {
+    const resolvedFrom = resolveAddress(from);
+    const resolvedTo = resolveAddress(to);
+    try {
+      const result = await this.publicClient.readContract({
+        address: config.contracts.token,
+        abi: TokenABI,
+        functionName: 'canTransfer',
+        args: [resolvedFrom, resolvedTo, amount],
+      });
+      return result as [boolean, number];
+    } catch (error: any) {
+      console.error(`Blockchain canTransfer revert:`, error.message);
+      return [false, 1];
+    }
   }
 
   /**
    * Burn tokens from an address
    */
-  async burnTokens(from: `0x${string}`, amount: bigint) {
+  async burnTokens(from: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
+    const resolvedFrom = resolveAddress(from);
 
-    const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'burn',
-      args: [from, amount],
-      account: this.agentAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: config.contracts.token,
+        abi: TokenABI,
+        functionName: 'burn',
+        args: [resolvedFrom, amount],
+        account: this.agentAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain burnTokens failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
    * Freeze or unfreeze an address
    */
-  async freezeAddress(wallet: `0x${string}`, freeze: boolean) {
+  async freezeAddress(wallet: string, freeze: boolean) {
     const client = this.getWalletClient(this.agentAccount);
+    const resolvedWallet = resolveAddress(wallet);
 
-    const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'setAddressFrozen',
-      args: [wallet, freeze],
-      account: this.agentAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: config.contracts.token,
+        abi: TokenABI,
+        functionName: 'setAddressFrozen',
+        args: [resolvedWallet, freeze],
+        account: this.agentAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain freezeAddress failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
    * Freeze partial tokens for an address
    */
-  async freezePartialTokens(wallet: `0x${string}`, amount: bigint) {
+  async freezePartialTokens(wallet: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
+    const resolvedWallet = resolveAddress(wallet);
 
-    const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'freezePartialTokens',
-      args: [wallet, amount],
-      account: this.agentAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: config.contracts.token,
+        abi: TokenABI,
+        functionName: 'freezePartialTokens',
+        args: [resolvedWallet, amount],
+        account: this.agentAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain freezePartialTokens failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
    * Unfreeze partial tokens for an address
    */
-  async unfreezePartialTokens(wallet: `0x${string}`, amount: bigint) {
+  async unfreezePartialTokens(wallet: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
+    const resolvedWallet = resolveAddress(wallet);
 
-    const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'unfreezePartialTokens',
-      args: [wallet, amount],
-      account: this.agentAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: config.contracts.token,
+        abi: TokenABI,
+        functionName: 'unfreezePartialTokens',
+        args: [resolvedWallet, amount],
+        account: this.agentAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain unfreezePartialTokens failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
    * Check if an address is frozen
    */
-  async isFrozen(wallet: `0x${string}`): Promise<boolean> {
+  async isFrozen(wallet: string): Promise<boolean> {
+    const resolvedWallet = resolveAddress(wallet);
     return await this.publicClient.readContract({
       address: config.contracts.token,
       abi: TokenABI,
       functionName: 'isFrozen',
-      args: [wallet],
+      args: [resolvedWallet],
     }) as boolean;
   }
 
   /**
    * Get frozen token amount for an address
    */
-  async getFrozenTokens(wallet: `0x${string}`): Promise<bigint> {
+  async getFrozenTokens(wallet: string): Promise<bigint> {
+    const resolvedWallet = resolveAddress(wallet);
     return await this.publicClient.readContract({
       address: config.contracts.token,
       abi: TokenABI,
       functionName: 'getFrozenTokens',
-      args: [wallet],
+      args: [resolvedWallet],
     }) as bigint;
   }
 
   /**
    * Force transfer tokens (regulatory action)
    */
-  async forceTransfer(from: `0x${string}`, to: `0x${string}`, amount: bigint) {
+  async forceTransfer(from: string, to: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
+    const resolvedFrom = resolveAddress(from);
+    const resolvedTo = resolveAddress(to);
 
-    const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'forcedTransfer',
-      args: [from, to, amount],
-      account: this.agentAccount,
-    });
+    try {
+      const { request } = await this.publicClient.simulateContract({
+        address: config.contracts.token,
+        abi: TokenABI,
+        functionName: 'forcedTransfer',
+        args: [resolvedFrom, resolvedTo, amount],
+        account: this.agentAccount,
+      });
 
-    const hash = await client.writeContract(request);
-    return await this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await client.writeContract(request);
+      return await this.publicClient.waitForTransactionReceipt({ hash });
+    } catch (error: any) {
+      console.error(`Blockchain forceTransfer failed:`, error.message);
+      throw error;
+    }
   }
 
   /**
