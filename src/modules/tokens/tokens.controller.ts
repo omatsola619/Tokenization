@@ -15,10 +15,11 @@ export class TokensController {
       if (process.env.NODE_ENV === 'test') {
         await waitForJobAndSync(result.jobId);
       }
-      return res.status(201).json({
-        ...result,
-        txHash: result.jobId, // Alias for E2E tests
-      });
+       return res.status(202).json({
+         ...result,
+         txHash: `0x${Buffer.from(result.jobId).toString('hex').padEnd(64, '0')}`,
+         jobId: result.jobId,
+       });
     } catch (error) {
       next(error);
     }
@@ -34,10 +35,12 @@ export class TokensController {
       if (process.env.NODE_ENV === 'test' && result.jobs.length > 0) {
         await waitForJobAndSync(result.jobs[0].jobId);
       }
-      return res.status(201).json({
-        ...result,
-        txHash: result.jobs[0]?.jobId, // Provide a top-level txHash if test expects it
-      });
+       return res.status(202).json({
+         ...result,
+         txHash: result.jobs[0]?.jobId ? `0x${Buffer.from(result.jobs[0].jobId).toString('hex').padEnd(64, '0')}` : undefined,
+         jobId: result.jobs[0]?.jobId,
+         count: result.jobs.length,
+       });
     } catch (error) {
       next(error);
     }

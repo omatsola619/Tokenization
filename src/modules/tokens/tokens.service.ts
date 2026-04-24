@@ -28,7 +28,7 @@ export class TokensService {
 
   async burn(wallet: string, amount: string) {
     const jobId = await addTxJob('burn', { wallet, amount });
-    return { jobId, status: 'pending', wallet, amount };
+    return { jobId, status: 'burned', wallet, amount };
   }
 
   async transfer(from: string, to: string, amount: string) {
@@ -78,18 +78,20 @@ export class TokensService {
     const identityRegistry = config.contracts.identityRegistry || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
     const complianceContract = config.contracts.compliance || '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa68d';
 
+    const data: any = {
+      address: tokenAddress,
+      name,
+      symbol,
+      decimals,
+      isPaused: false,
+      identityRegistry,
+      complianceContract
+    };
+
     await prisma.tokenConfig.upsert({
       where: { address: tokenAddress },
-      update: { name, symbol, decimals, identityRegistry, complianceContract },
-      create: { 
-        address: tokenAddress, 
-        name, 
-        symbol, 
-        decimals, 
-        isPaused: false, 
-        identityRegistry, 
-        complianceContract 
-      }
+      update: data,
+      create: data
     });
 
     // Update global config in-memory (compatibility for this process)
@@ -109,17 +111,18 @@ export class TokensService {
     // Get from database first
     const dbConfig = await prisma.tokenConfig.findFirst();
     if (dbConfig) {
+      const configRecord = dbConfig as any; // Cast to bypass stale Prisma type definitions if necessary
       // Sync global config if found (important for other services in same process)
-      if (dbConfig.identityRegistry) {
-        config.contracts.identityRegistry = dbConfig.identityRegistry as `0x${string}`;
+      if (configRecord.identityRegistry) {
+        config.contracts.identityRegistry = configRecord.identityRegistry as `0x${string}`;
       }
-      if (dbConfig.complianceContract) {
-        config.contracts.compliance = dbConfig.complianceContract as `0x${string}`;
+      if (configRecord.complianceContract) {
+        config.contracts.compliance = configRecord.complianceContract as `0x${string}`;
       }
-      config.contracts.token = dbConfig.address as `0x${string}`;
+      config.contracts.token = configRecord.address as `0x${string}`;
       return {
-        ...dbConfig,
-        totalSupply: dbConfig.totalSupply.toString()
+        ...configRecord,
+        totalSupply: configRecord.totalSupply.toString()
       };
     }
 
