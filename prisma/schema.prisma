@@ -51,12 +51,14 @@ model Claim {
 }
 
 model TokenConfig {
-  address      String  @id
-  name         String
-  symbol       String
-  decimals     Int     @default(18)
-  totalSupply  BigInt  @default(0)
-  isPaused     Boolean @default(false)
+  address            String  @id
+  name               String
+  symbol             String
+  decimals           Int     @default(18)
+  totalSupply        BigInt  @default(0)
+  isPaused           Boolean @default(false)
+  identityRegistry   String?
+  complianceContract String?
 
   @@map("tokens")
 }
