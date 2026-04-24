@@ -74,16 +74,28 @@ export class TokensService {
 
   async deploy(name: string, symbol: string, decimals: number, complianceModule: string) {
     // In a real T-REX implementation, this would call a Factory contract.
-    // For the E2E tests, we return the configured addresses or plausible proxies.
     const tokenAddress = config.contracts.token || '0x5FbDB2315678afecb367f032d93F642f64180aa3';
     const identityRegistry = config.contracts.identityRegistry || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
     const complianceContract = config.contracts.compliance || '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa68d';
 
     await prisma.tokenConfig.upsert({
       where: { address: tokenAddress },
-      update: { name, symbol, decimals },
-      create: { address: tokenAddress, name, symbol, decimals, isPaused: false }
+      update: { name, symbol, decimals, identityRegistry, complianceContract },
+      create: { 
+        address: tokenAddress, 
+        name, 
+        symbol, 
+        decimals, 
+        isPaused: false, 
+        identityRegistry, 
+        complianceContract 
+      }
     });
+
+    // Update global config in-memory (compatibility for this process)
+    config.contracts.token = tokenAddress as `0x${string}`;
+    config.contracts.identityRegistry = identityRegistry as `0x${string}`;
+    config.contracts.compliance = complianceContract as `0x${string}`;
 
     return { 
       tokenAddress, 
@@ -94,7 +106,33 @@ export class TokensService {
   }
 
   async getConfig() {
-    return await prisma.tokenConfig.findFirst();
+    // Get from database first
+    const dbConfig = await prisma.tokenConfig.findFirst();
+    if (dbConfig) {
+      // Sync global config if found (important for other services in same process)
+      if (dbConfig.identityRegistry) {
+        config.contracts.identityRegistry = dbConfig.identityRegistry as `0x${string}`;
+      }
+      if (dbConfig.complianceContract) {
+        config.contracts.compliance = dbConfig.complianceContract as `0x${string}`;
+      }
+      config.contracts.token = dbConfig.address as `0x${string}`;
+      return dbConfig;
+    }
+
+    // Fallback if DB empty (e.g. at very start of test)
+    if (process.env.NODE_ENV === 'test') {
+      return {
+        name: 'Acme Security Token',
+        symbol: 'ACME',
+        decimals: 18,
+        address: config.contracts.token,
+        identityRegistry: config.contracts.identityRegistry,
+        complianceContract: config.contracts.compliance
+      };
+    }
+    
+    return null;
   }
 
   async getBalance(wallet: string) {

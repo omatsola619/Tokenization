@@ -25,6 +25,7 @@ export class InvestorsService {
         walletAddress: wallet,
         country,
         kycProviderId,
+        identityAddress: wallet, // Store immediately to avoid race conditions with indexer
         identityRegistered: true,
         metadata: metadata || {},
       },

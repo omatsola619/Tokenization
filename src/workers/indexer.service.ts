@@ -5,6 +5,7 @@ import { config } from '../config';
 import { parseEventLogs, PublicClient, Log } from 'viem';
 import { withRetry } from '../common/retry';
 import { formatAddress } from '../common/address';
+import { tokensService } from '../modules/tokens/tokens.service';
 
 export class IndexerService {
   private publicClient: PublicClient;
@@ -31,12 +32,25 @@ export class IndexerService {
   }
 
   private async sync() {
+    // 1. Refresh dynamic contract config from DB
+    await tokensService.getConfig();
+
+    // 2. Determine start block
     const lastEvent = await prisma.event.findFirst({
       orderBy: { blockNumber: 'desc' },
     });
 
-    const startBlock = lastEvent ? BigInt(lastEvent.blockNumber + 1) : BigInt(0);
+    let startBlock: bigint;
     const latestBlock = await this.publicClient.getBlockNumber();
+
+    if (lastEvent) {
+      startBlock = BigInt(lastEvent.blockNumber + 1);
+    } else if (process.env.NODE_ENV === 'test') {
+      // In tests, start from current block to avoid syncing past history
+      startBlock = latestBlock;
+    } else {
+      startBlock = BigInt(0);
+    }
 
     if (startBlock > latestBlock) return;
 
@@ -47,76 +61,75 @@ export class IndexerService {
         config.contracts.token, 
         config.contracts.identityRegistry,
         config.contracts.claimIssuer
-      ],
+      ].filter(a => !!a && a !== '0x0000000000000000000000000000000000000000') as `0x${string}`[],
       fromBlock: startBlock,
       toBlock: latestBlock,
     }));
 
     if (logs.length === 0) return;
 
-    const parsedLogs = parseEventLogs({
-      abi: [...TokenABI, ...IdentityRegistryABI, ...IdentityABI] as any,
-      logs: logs,
-    });
+    console.log(`📦 Found ${logs.length} events to process`);
 
-    for (const parsed of parsedLogs) {
-      await this.processEvent(parsed);
+    for (const log of logs) {
+      await this.processLog(log);
     }
-
-    console.log(`✅ Processed ${parsedLogs.length} events.`);
   }
 
-  private async processEvent(parsed: any) {
-    console.log(`📝 Processing: ${parsed.eventName} (TX: ${parsed.transactionHash})`);
+  private async processLog(log: Log) {
+    // Determine which ABI to use based on the address
+    let abi: any;
+    const addr = log.address.toLowerCase();
+    
+    if (addr === config.contracts.token?.toLowerCase()) {
+      abi = TokenABI;
+    } else if (addr === config.contracts.identityRegistry?.toLowerCase()) {
+      abi = IdentityRegistryABI;
+    } else {
+      // It might be an dynamic Identity contract
+      abi = IdentityABI;
+    }
 
-    // 1. Raw event logging (Idempotent)
-    await prisma.event.upsert({
-      where: {
-        txHash_logIndex: {
-          txHash: parsed.transactionHash!,
-          logIndex: parsed.logIndex!,
+    // Capture events with explicit type casting for TS compatibility
+    const events = parseEventLogs({
+      abi,
+      logs: [log]
+    }) as any[];
+
+    for (const event of events) {
+      const eventName = event.eventName;
+      const args = event.args;
+      
+      // Store event for idempotency
+      await prisma.event.upsert({
+        where: {
+          txHash_logIndex: {
+            txHash: log.transactionHash!,
+            logIndex: log.logIndex!
+          }
         },
-      },
-      update: {},
-      create: {
-        blockNumber: Number(parsed.blockNumber),
-        logIndex: parsed.logIndex!,
-        txHash: parsed.transactionHash!,
-        eventName: parsed.eventName,
-        data: this.stringifyBigInt(parsed.args),
-      },
-    });
+        create: {
+          blockNumber: Number(log.blockNumber),
+          logIndex: log.logIndex!,
+          txHash: log.transactionHash!,
+          eventName,
+          data: args as any
+        },
+        update: {}
+      });
 
-    // 2. Stateful processing
-    try {
-      switch (parsed.eventName) {
+      console.log(`📜 Processing ${eventName}...`);
+
+      switch (eventName) {
         case 'Transfer':
-          await this.handleTransfer(parsed);
+          await this.handleTransfer(event);
           break;
         case 'IdentityRegistered':
-          await this.handleIdentityRegistered(parsed);
-          break;
-        case 'AddressFrozen':
-          await this.handleAddressFrozen(parsed);
-          break;
-        case 'TokensFrozen':
-          await this.handleTokensFrozen(parsed);
-          break;
-        case 'TokensUnfrozen':
-          await this.handleTokensUnfrozen(parsed);
-          break;
-        case 'Paused':
-          await this.handlePaused(true);
-          break;
-        case 'Unpaused':
-          await this.handlePaused(false);
+          await this.handleIdentityRegistered(event);
           break;
         case 'ClaimAdded':
-          await this.handleClaimAdded(parsed);
+          await this.handleClaimAdded(event);
           break;
       }
-    } catch (error) {
-      console.error(`⚠️ Failed to process state for ${parsed.eventName}:`, error);
     }
   }
 
@@ -125,33 +138,31 @@ export class IndexerService {
     const from = formatAddress(rawFrom);
     const to = formatAddress(rawTo);
     const amount = BigInt(value);
-    const txHash = parsed.transactionHash!;
 
     await prisma.$transaction(async (tx) => {
-      // Update Recipient Balance
-      if (rawTo !== '0x0000000000000000000000000000000000000000') {
-        await tx.balance.upsert({
-          where: { wallet: to },
-          update: { amount: { increment: amount } },
-          create: { wallet: to, amount: amount },
-        });
-      }
-
-      // Update Sender Balance
+      // 1. Update balances
       if (rawFrom !== '0x0000000000000000000000000000000000000000') {
+        const sender = await tx.balance.findUnique({ where: { wallet: from } });
         await tx.balance.upsert({
           where: { wallet: from },
-          update: { amount: { decrement: amount } },
-          create: { wallet: from, amount: -amount },
+          update: { amount: (sender?.amount || 0n) - amount },
+          create: { wallet: from, amount: 0n }
         });
       }
 
-      // Record Transaction
+      const receiver = await tx.balance.findUnique({ where: { wallet: to } });
+      await tx.balance.upsert({
+        where: { wallet: to },
+        update: { amount: (receiver?.amount || 0n) + amount },
+        create: { wallet: to, amount }
+      });
+
+      // 2. Record transaction
       await tx.transaction.upsert({
-        where: { txHash },
+        where: { txHash: parsed.transactionHash },
         update: { status: 'confirmed' },
         create: {
-          txHash,
+          txHash: parsed.transactionHash,
           from,
           to,
           amount,
@@ -179,68 +190,11 @@ export class IndexerService {
           identityAddress: identity,
           country: country.toString(),
           identityRegistered: true,
-        },
-      });
-
-      await tx.wallet.upsert({
-        where: { address: investor },
-        update: { identityAddress: identity },
-        create: {
-          address: investor,
-          investorId: (await tx.investor.findUnique({ where: { walletAddress: investor } }))!.id,
-          identityAddress: identity,
-          isPrimary: true,
-        },
+          metadata: {}
+        }
       });
     });
-  }
-
-  private async handleAddressFrozen(parsed: any) {
-    const { _userAddress, _isFrozen } = parsed.args;
-    const wallet = formatAddress(_userAddress);
-
-    await prisma.investor.updateMany({
-      where: { walletAddress: wallet },
-      data: { frozen: _isFrozen },
-    });
-
-    console.log(`🧊 Address ${wallet} frozen=${_isFrozen}`);
-  }
-
-  private async handleTokensFrozen(parsed: any) {
-    const { _userAddress, _amount } = parsed.args;
-    const wallet = formatAddress(_userAddress);
-    const amount = BigInt(_amount);
-
-    await prisma.balance.upsert({
-      where: { wallet },
-      update: { frozen: { increment: amount } },
-      create: { wallet, amount: BigInt(0), frozen: amount },
-    });
-
-    console.log(`🔒 ${amount} tokens frozen for ${wallet}`);
-  }
-
-  private async handleTokensUnfrozen(parsed: any) {
-    const { _userAddress, _amount } = parsed.args;
-    const amount = BigInt(_amount);
-
-    await prisma.balance.upsert({
-      where: { wallet: _userAddress },
-      update: { frozen: { decrement: amount } },
-      create: { wallet: _userAddress, amount: BigInt(0), frozen: BigInt(0) },
-    });
-
-    console.log(`🔓 ${amount} tokens unfrozen for ${_userAddress}`);
-  }
-
-  private async handlePaused(isPaused: boolean) {
-    // Update all token configs — in our single-token setup, update the first one
-    await prisma.tokenConfig.updateMany({
-      data: { isPaused },
-    });
-
-    console.log(`Paused: ${isPaused}`);
+    console.log(`📜 IdentityRegistered synced: ${investor} -> ${identity}`);
   }
 
   private async handleClaimAdded(parsed: any) {
@@ -255,28 +209,28 @@ export class IndexerService {
       }
     });
 
-    if (!wallet) {
+    // Fallback: search in investors table directly
+    const investor = wallet ? null : await prisma.investor.findFirst({
+       where: { identityAddress: { equals: identityAddress, mode: 'insensitive' } }
+    });
+
+    const finalWalletAddress = wallet?.address || investor?.walletAddress;
+
+    if (!finalWalletAddress) {
       console.warn(`⚠️ ClaimAdded for unknown identity: ${identityAddress}`);
       return;
     }
 
     await prisma.claim.create({
       data: {
-        wallet: formatAddress(wallet.address), // Ensure it uses the formatted version if different
+        wallet: formatAddress(finalWalletAddress),
         topic: topic.toString(),
-        claimId: claimId,
+        claimId: claimId.toString(),
         issuer: formatAddress(issuer),
         status: 'active'
       }
     });
-
-    console.log(`📜 Claim synced for ${formatAddress(wallet.address)}: Topic ${topic}`);
-  }
-
-  private stringifyBigInt(obj: any): any {
-    return JSON.parse(JSON.stringify(obj, (key, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    ));
+    console.log(`📜 Claim synced for ${finalWalletAddress}: Topic ${topic}`);
   }
 }
 

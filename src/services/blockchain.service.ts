@@ -28,9 +28,6 @@ export class BlockchainService {
     this.agentAccount = privateKeyToAccount(config.blockchain.agentKey);
   }
 
-  /**
-   * Get the wallet client for a specific role (Issuer or Agent)
-   */
   private getWalletClient(account: Account): WalletClient {
     return createWalletClient({
       account,
@@ -39,9 +36,6 @@ export class BlockchainService {
     });
   }
 
-  /**
-   * Register an investor on-chain
-   */
   async registerInvestor(walletAddress: string, identityAddress: string, country: number) {
     const client = this.getWalletClient(this.agentAccount);
     const resolvedWallet = resolveAddress(walletAddress);
@@ -49,7 +43,7 @@ export class BlockchainService {
     
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: config.contracts.identityRegistry,
+        address: config.contracts.identityRegistry as `0x${string}`,
         abi: IdentityRegistryABI,
         functionName: 'registerIdentity',
         args: [resolvedWallet, resolvedIdentity, country],
@@ -64,9 +58,6 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Add a claim to an investor's Identity
-   */
   async addClaim(
     identityAddress: string, 
     topic: bigint, 
@@ -82,7 +73,7 @@ export class BlockchainService {
     
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: resolvedIdentity,
+        address: resolvedIdentity as `0x${string}`,
         abi: IdentityABI,
         functionName: 'addClaim',
         args: [topic, scheme, resolvedIssuer, signature, data, uri],
@@ -97,16 +88,13 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Mint tokens to an investor
-   */
   async mintTokens(to: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
     const resolvedTo = resolveAddress(to);
 
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: config.contracts.token,
+        address: config.contracts.token as `0x${string}`,
         abi: TokenABI,
         functionName: 'mint',
         args: [resolvedTo, amount],
@@ -121,15 +109,12 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Check if a transfer is compliant
-   */
   async canTransfer(from: string, to: string, amount: bigint): Promise<[boolean, number]> {
     const resolvedFrom = resolveAddress(from);
     const resolvedTo = resolveAddress(to);
     try {
       const result = await this.publicClient.readContract({
-        address: config.contracts.token,
+        address: config.contracts.token as `0x${string}`,
         abi: TokenABI,
         functionName: 'canTransfer',
         args: [resolvedFrom, resolvedTo, amount],
@@ -141,16 +126,13 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Burn tokens from an address
-   */
   async burnTokens(from: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
     const resolvedFrom = resolveAddress(from);
 
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: config.contracts.token,
+        address: config.contracts.token as `0x${string}`,
         abi: TokenABI,
         functionName: 'burn',
         args: [resolvedFrom, amount],
@@ -165,16 +147,13 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Freeze or unfreeze an address
-   */
   async freezeAddress(wallet: string, freeze: boolean) {
     const client = this.getWalletClient(this.agentAccount);
     const resolvedWallet = resolveAddress(wallet);
 
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: config.contracts.token,
+        address: config.contracts.token as `0x${string}`,
         abi: TokenABI,
         functionName: 'setAddressFrozen',
         args: [resolvedWallet, freeze],
@@ -189,22 +168,17 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Freeze partial tokens for an address
-   */
   async freezePartialTokens(wallet: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
     const resolvedWallet = resolveAddress(wallet);
-
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: config.contracts.token,
+        address: config.contracts.token as `0x${string}`,
         abi: TokenABI,
         functionName: 'freezePartialTokens',
         args: [resolvedWallet, amount],
         account: this.agentAccount,
       });
-
       const hash = await client.writeContract(request);
       return await this.publicClient.waitForTransactionReceipt({ hash });
     } catch (error: any) {
@@ -213,22 +187,17 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Unfreeze partial tokens for an address
-   */
   async unfreezePartialTokens(wallet: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
     const resolvedWallet = resolveAddress(wallet);
-
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: config.contracts.token,
+        address: config.contracts.token as `0x${string}`,
         abi: TokenABI,
         functionName: 'unfreezePartialTokens',
         args: [resolvedWallet, amount],
         account: this.agentAccount,
       });
-
       const hash = await client.writeContract(request);
       return await this.publicClient.waitForTransactionReceipt({ hash });
     } catch (error: any) {
@@ -237,35 +206,6 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Check if an address is frozen
-   */
-  async isFrozen(wallet: string): Promise<boolean> {
-    const resolvedWallet = resolveAddress(wallet);
-    return await this.publicClient.readContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'isFrozen',
-      args: [resolvedWallet],
-    }) as boolean;
-  }
-
-  /**
-   * Get frozen token amount for an address
-   */
-  async getFrozenTokens(wallet: string): Promise<bigint> {
-    const resolvedWallet = resolveAddress(wallet);
-    return await this.publicClient.readContract({
-      address: config.contracts.token,
-      abi: TokenABI,
-      functionName: 'getFrozenTokens',
-      args: [resolvedWallet],
-    }) as bigint;
-  }
-
-  /**
-   * Force transfer tokens (regulatory action)
-   */
   async forceTransfer(from: string, to: string, amount: bigint) {
     const client = this.getWalletClient(this.agentAccount);
     const resolvedFrom = resolveAddress(from);
@@ -273,7 +213,7 @@ export class BlockchainService {
 
     try {
       const { request } = await this.publicClient.simulateContract({
-        address: config.contracts.token,
+        address: config.contracts.token as `0x${string}`,
         abi: TokenABI,
         functionName: 'forcedTransfer',
         args: [resolvedFrom, resolvedTo, amount],
@@ -288,14 +228,10 @@ export class BlockchainService {
     }
   }
 
-  /**
-   * Pause the token
-   */
   async pauseToken() {
     const client = this.getWalletClient(this.agentAccount);
-
     const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
+      address: config.contracts.token as `0x${string}`,
       abi: TokenABI,
       functionName: 'pause',
       account: this.agentAccount,
@@ -305,14 +241,10 @@ export class BlockchainService {
     return await this.publicClient.waitForTransactionReceipt({ hash });
   }
 
-  /**
-   * Unpause the token
-   */
   async unpauseToken() {
     const client = this.getWalletClient(this.agentAccount);
-
     const { request } = await this.publicClient.simulateContract({
-      address: config.contracts.token,
+      address: config.contracts.token as `0x${string}`,
       abi: TokenABI,
       functionName: 'unpause',
       account: this.agentAccount,
@@ -322,20 +254,34 @@ export class BlockchainService {
     return await this.publicClient.waitForTransactionReceipt({ hash });
   }
 
-  /**
-   * Check if token is paused
-   */
   async isPaused(): Promise<boolean> {
     return await this.publicClient.readContract({
-      address: config.contracts.token,
+      address: config.contracts.token as `0x${string}`,
       abi: TokenABI,
       functionName: 'paused',
     }) as boolean;
   }
 
-  /**
-   * Get public client for custom operations
-   */
+  async isFrozen(wallet: string): Promise<boolean> {
+    const resolvedWallet = resolveAddress(wallet);
+    return await this.publicClient.readContract({
+      address: config.contracts.token as `0x${string}`,
+      abi: TokenABI,
+      functionName: 'isFrozen',
+      args: [resolvedWallet],
+    }) as boolean;
+  }
+
+  async getFrozenTokens(wallet: string): Promise<bigint> {
+    const resolvedWallet = resolveAddress(wallet);
+    return await this.publicClient.readContract({
+      address: config.contracts.token as `0x${string}`,
+      abi: TokenABI,
+      functionName: 'getFrozenTokens',
+      args: [resolvedWallet],
+    }) as bigint;
+  }
+
   getPublicClient() {
     return this.publicClient;
   }
