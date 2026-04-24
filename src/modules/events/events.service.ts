@@ -24,7 +24,7 @@ export class EventsService {
 
   async resync() {
     // Logic for resync would involve clearing events and restarting indexer
-    return { status: 'resync_requested', message: 'Clear the events table to trigger a full resync.' };
+    return { status: 'resyncing', message: 'Clear the events table to trigger a full resync.' };
   }
 }
 
