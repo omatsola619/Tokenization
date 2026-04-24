@@ -117,7 +117,10 @@ export class TokensService {
         config.contracts.compliance = dbConfig.complianceContract as `0x${string}`;
       }
       config.contracts.token = dbConfig.address as `0x${string}`;
-      return dbConfig;
+      return {
+        ...dbConfig,
+        totalSupply: dbConfig.totalSupply.toString()
+      };
     }
 
     // Fallback if DB empty (e.g. at very start of test)
