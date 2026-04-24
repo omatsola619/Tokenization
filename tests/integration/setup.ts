@@ -1,4 +1,5 @@
 import { prisma } from '../../src/database/database.service';
+process.env.SKIP_SYNC_WAIT = 'true';
 
 jest.mock('../../src/services/blockchain.service', () => ({
   blockchainService: {
@@ -102,6 +103,7 @@ beforeAll(async () => {
     data: {
       walletAddress: '0xInvestorA',
       country: 'GB',
+      identityAddress: '0xInvestorA', // Required by ClaimsService.issue
       identityRegistered: true,
       frozen: false
     }

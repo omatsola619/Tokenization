@@ -34,13 +34,16 @@ export class ClaimsService {
       });
     }
 
-    if (!investor?.identityAddress) {
-      throw { status: 400, message: `Investor ${wallet} has no identity registered` };
+    if (!investor) {
+      throw { status: 400, message: `Investor ${wallet} not found` };
     }
+
+    // Use identityAddress if available, fall back to walletAddress
+    const identityAddress = investor.identityAddress || investor.walletAddress;
 
     // 3. Submit job to queue for on-chain issuance
     const jobId = await addTxJob('addClaim', {
-      identityAddress: investor.identityAddress,
+      identityAddress: identityAddress,
       topic,
       claimId,
       issuer,

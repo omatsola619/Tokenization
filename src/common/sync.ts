@@ -6,7 +6,7 @@ import { prisma } from '../database/database.service';
  * blockchain events to be indexed.
  */
 export async function waitForJobAndSync(jobId: string) {
-  if (process.env.NODE_ENV !== 'test') return;
+  if (process.env.NODE_ENV !== 'test' || process.env.SKIP_SYNC_WAIT === 'true') return;
 
   const job = await txQueue.getJob(jobId);
   if (!job) return;
@@ -34,7 +34,7 @@ export async function waitForJobAndSync(jobId: string) {
  * Specifically wait for a claim to appear in the database for a wallet.
  */
 export async function waitForClaimSync(wallet: string, topicLabel: string) {
-  if (process.env.NODE_ENV !== 'test') return;
+  if (process.env.NODE_ENV !== 'test' || process.env.SKIP_SYNC_WAIT === 'true') return;
 
   // Map to numeric ID if needed (matches Indexer storage)
   const topic = topicLabel === 'KYC' ? '1' : 
@@ -56,7 +56,7 @@ export async function waitForClaimSync(wallet: string, topicLabel: string) {
  * Wait for a wallet to have a registered identity address in the database.
  */
 export async function waitForIdentitySync(wallet: string) {
-  if (process.env.NODE_ENV !== 'test') return;
+  if (process.env.NODE_ENV !== 'test' || process.env.SKIP_SYNC_WAIT === 'true') return;
 
   for (let i = 0; i < 20; i++) { // Max 10 seconds
     const investor = await prisma.investor.findUnique({
