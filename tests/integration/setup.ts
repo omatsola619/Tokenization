@@ -36,7 +36,10 @@ jest.mock('../../src/services/queue.service', () => ({
     state: 'completed',
     result: { txHash: '0xmock' },
   }),
-  txQueue: { add: jest.fn() },
+  txQueue: { 
+    add: jest.fn(),
+    getJob: jest.fn().mockResolvedValue(null), // waitForJobAndSync checks this; null = skip waiting
+  },
   txQueueEvents: {},
   redisConnection: {},
 }));

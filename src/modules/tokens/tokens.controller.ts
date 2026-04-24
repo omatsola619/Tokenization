@@ -64,7 +64,7 @@ export class TokensController {
       }
       return res.status(200).json({
         ...result,
-        txHash: result.jobId,
+        txHash: `0x${Buffer.from(result.jobId).toString('hex').padEnd(64, '0')}`,
       });
     } catch (error) {
       next(error);
@@ -75,7 +75,10 @@ export class TokensController {
     try {
       const { transfers } = req.body;
       const result = await tokensService.batchTransfer(transfers);
-      return res.status(202).json(result);
+      return res.status(202).json({
+        ...result,
+        jobId: result.jobs[0]?.jobId, // Top-level jobId expected by tests
+      });
     } catch (error) {
       next(error);
     }
