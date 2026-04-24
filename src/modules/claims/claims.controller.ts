@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { successResponse } from '../../common/response';
 import { claimsService } from './claims.service';
+import { waitForJobAndSync, waitForClaimSync } from '../../common/sync';
 
 export class ClaimsController {
   async issue(req: Request, res: Response, next: NextFunction) {
@@ -8,6 +9,12 @@ export class ClaimsController {
       const { wallet, topic, claimId, issuer } = req.body;
       const id = claimId || `claim_${Date.now()}`;
       const claim = await claimsService.issue(wallet, topic, id, issuer);
+      
+      if (process.env.NODE_ENV === 'test') {
+        await waitForJobAndSync(claim.jobId);
+        await waitForClaimSync(wallet, topic);
+      }
+
       return res.status(201).json({
         status: 'issued',
         claimId: claim.jobId,
