@@ -26,17 +26,24 @@ export class AdminService {
       pendingTxHash
     });
 
-    return { jobId, status: 'pending', from, to, amount };
+    return { 
+      jobId, 
+      status: 'pending', 
+      from, 
+      to, 
+      amount,
+      txHash: `0x${Buffer.from(jobId).toString('hex').padEnd(64, '0')}`
+    };
   }
 
   async pause() {
     const jobId = await addTxJob('pause', {});
-    return { jobId, status: 'pending', action: 'pause' };
+    return { jobId, status: 'pending', action: 'pause', paused: true };
   }
 
   async unpause() {
     const jobId = await addTxJob('unpause', {});
-    return { jobId, status: 'pending', action: 'unpause' };
+    return { jobId, status: 'pending', action: 'unpause', paused: false };
   }
 
   async isPaused() {
