@@ -5,12 +5,12 @@ import { addTxJob } from '../../services/queue.service';
 export class ComplianceService {
   async freeze(wallet: string) {
     const jobId = await addTxJob('freeze', { wallet });
-    return { jobId, status: 'pending', wallet, action: 'freeze' };
+    return { jobId, status: 'pending', wallet, action: 'freeze', frozen: true };
   }
 
   async unfreeze(wallet: string) {
     const jobId = await addTxJob('unfreeze', { wallet });
-    return { jobId, status: 'pending', wallet, action: 'unfreeze' };
+    return { jobId, status: 'pending', wallet, action: 'unfreeze', frozen: false };
   }
 
   async freezeTokens(wallet: string, amount: string) {
@@ -19,7 +19,7 @@ export class ComplianceService {
       amount: amount.toString()
     });
 
-    return { jobId, status: 'pending', wallet, amount };
+    return { jobId, status: 'pending', wallet, amount, frozenAmount: amount };
   }
 
   async getStatus(wallet: string) {
