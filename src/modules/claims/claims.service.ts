@@ -44,6 +44,7 @@ export class ClaimsService {
     // 3. Submit job to queue for on-chain issuance
     const jobId = await addTxJob('addClaim', {
       identityAddress: identityAddress,
+      wallet: investor.walletAddress, // passed so worker can write to prisma.claim with the correct wallet key
       topic,
       claimId,
       issuer,

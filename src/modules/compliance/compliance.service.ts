@@ -1,15 +1,18 @@
 import { blockchainService } from '../../services/blockchain.service';
 import { prisma } from '../../database/database.service';
 import { addTxJob } from '../../services/queue.service';
+import { waitForJobAndSync } from '../../common/sync';
 
 export class ComplianceService {
   async freeze(wallet: string) {
     const jobId = await addTxJob('freeze', { wallet });
+    await waitForJobAndSync(jobId);
     return { jobId, status: 'pending', wallet, action: 'freeze', frozen: true };
   }
 
   async unfreeze(wallet: string) {
     const jobId = await addTxJob('unfreeze', { wallet });
+    await waitForJobAndSync(jobId);
     return { jobId, status: 'pending', wallet, action: 'unfreeze', frozen: false };
   }
 

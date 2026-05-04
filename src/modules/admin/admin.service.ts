@@ -1,7 +1,7 @@
 import { blockchainService } from '../../services/blockchain.service';
 import { prisma } from '../../database/database.service';
-import { config } from '../../config';
 import { addTxJob } from '../../services/queue.service';
+import { waitForJobAndSync } from '../../common/sync';
 
 export class AdminService {
   async forceTransfer(from: string, to: string, amount: string) {
@@ -14,7 +14,7 @@ export class AdminService {
         from,
         to,
         amount: amountBI,
-        type: 'forceTransfer',
+        type: 'forced_transfer',
         status: 'pending'
       }
     });
@@ -25,12 +25,13 @@ export class AdminService {
       amount: amount.toString(),
       pendingTxHash
     });
+    await waitForJobAndSync(jobId);
 
-    return { 
-      jobId, 
-      status: 'pending', 
-      from, 
-      to, 
+    return {
+      jobId,
+      status: 'pending',
+      from,
+      to,
       amount,
       txHash: `0x${Buffer.from(jobId).toString('hex').padEnd(64, '0')}`
     };
@@ -38,11 +39,13 @@ export class AdminService {
 
   async pause() {
     const jobId = await addTxJob('pause', {});
+    await waitForJobAndSync(jobId);
     return { jobId, status: 'pending', action: 'pause', paused: true };
   }
 
   async unpause() {
     const jobId = await addTxJob('unpause', {});
+    await waitForJobAndSync(jobId);
     return { jobId, status: 'pending', action: 'unpause', paused: false };
   }
 

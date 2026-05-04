@@ -14,11 +14,23 @@ export class InvestorsService {
     const numericCountry = this.countryToNumeric(country);
 
     // ACTIVATE BLOCKCHAIN
-    await blockchainService.registerInvestor(
-      wallet as `0x${string}`, 
-      wallet as `0x${string}`, 
+    const receipt = await blockchainService.registerInvestor(
+      wallet as `0x${string}`,
+      wallet as `0x${string}`,
       numericCountry
     );
+
+    // Record identity registration as a transaction so the indexing flow can find it
+    await prisma.transaction.create({
+      data: {
+        txHash: receipt.transactionHash,
+        from: wallet,
+        to: wallet,
+        amount: BigInt(0),
+        type: 'identity_registered',
+        status: 'confirmed',
+      },
+    }).catch(() => {}); // Ignore duplicate if indexer already wrote it
 
     const investor = await prisma.investor.create({
       data: {
