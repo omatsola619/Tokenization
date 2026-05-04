@@ -33,7 +33,7 @@ export class TokensController {
 
       const result = await tokensService.batchMint(targetRecipients);
       if (process.env.NODE_ENV === 'test' && result.jobs.length > 0) {
-        await waitForJobAndSync(result.jobs[0].jobId);
+        await Promise.all(result.jobs.map(j => waitForJobAndSync(j.jobId)));
       }
        return res.status(202).json({
          ...result,
@@ -108,7 +108,7 @@ export class TokensController {
     }
   }
 
-  async getConfig(req: Request, res: Response, next: NextFunction) {
+  async getConfig(_req: Request, res: Response, next: NextFunction) {
     try {
       const result = await tokensService.getConfig();
       return res.status(200).json(result);

@@ -3,6 +3,7 @@ import { blockchainService } from '../services/blockchain.service';
 import { prisma } from '../database/database.service';
 import { redisConnection } from '../services/queue.service';
 import { TxJobData } from '../services/queue.service';
+import { formatAddress } from '../common/address';
 
 let _worker: Worker | null = null;
 
@@ -102,7 +103,7 @@ export const runTxWorker = async () => {
                 from: params.from,
                 to: params.to,
                 amount: BigInt(params.amount),
-                type: 'forceTransfer',
+                type: 'forced_transfer',
                 status: 'confirmed',
               },
             });
@@ -154,7 +155,7 @@ export const runTxWorker = async () => {
           }
           
           case 'addClaim': {
-            const { identityAddress, topic, scheme, issuer, uri } = params;
+            const { identityAddress, topic, scheme, issuer, uri, claimId, wallet } = params;
             const receipt = await blockchainService.addClaim(
               identityAddress,
               BigInt(topic),
@@ -164,6 +165,18 @@ export const runTxWorker = async () => {
               '0x' as `0x${string}`, // Data
               uri
             );
+            // Write claim directly to DB so waitForClaimSync can find it.
+            // The indexer only watches known contract addresses, not per-investor identity contracts.
+            const claimWallet = formatAddress(wallet || identityAddress);
+            await prisma.claim.create({
+              data: {
+                wallet: claimWallet,
+                topic: topic.toString(),
+                claimId: claimId || receipt.transactionHash,
+                issuer: formatAddress(issuer),
+                status: 'active',
+              },
+            }).catch(() => {}); // Ignore duplicate errors — indexer may have already written it
             result = { txHash: receipt.transactionHash };
             break;
           }
