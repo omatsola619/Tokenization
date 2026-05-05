@@ -214,6 +214,13 @@ export const IdentityRegistryABI = [
     type: 'function'
   },
   {
+    inputs: [{ internalType: 'address', name: '_userAddress', type: 'address' }],
+    name: 'contains',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'address', name: 'investor', type: 'address' },

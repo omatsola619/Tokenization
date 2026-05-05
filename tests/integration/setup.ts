@@ -18,6 +18,7 @@ jest.mock('../../src/services/blockchain.service', () => ({
     freezeAddress: jest.fn().mockResolvedValue({ transactionHash: '0xmock_freeze' }),
     freezePartialTokens: jest.fn().mockResolvedValue({ transactionHash: '0xmock_freeze_partial' }),
     unfreezePartialTokens: jest.fn().mockResolvedValue({ transactionHash: '0xmock_unfreeze_partial' }),
+    isIdentityRegistered: jest.fn().mockResolvedValue(false),
     isFrozen: jest.fn().mockResolvedValue(false),
     getFrozenTokens: jest.fn().mockResolvedValue(BigInt(0)),
     // --- Phase 2: Admin ---
