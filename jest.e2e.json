@@ -3,8 +3,10 @@
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
+  "testSequencer": "<rootDir>/tests/e2e/sequencer.js",
+  "runInBand": true,
   "globalSetup": "<rootDir>/globalSetup.ts",
-  "setupFilesAfterEnv": ["<rootDir>/tests/e2e/setup.ts"],
+  "setupFilesAfterEnv": ["<rootDir>/tests/e2e/setup.ts", "<rootDir>/tests/e2e/state-seeder.ts"],
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
