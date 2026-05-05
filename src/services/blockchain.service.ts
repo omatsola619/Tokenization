@@ -262,6 +262,20 @@ export class BlockchainService {
     }) as boolean;
   }
 
+  async isIdentityRegistered(walletAddress: string): Promise<boolean> {
+    const resolvedWallet = resolveAddress(walletAddress);
+    try {
+      return await this.publicClient.readContract({
+        address: config.contracts.identityRegistry as `0x${string}`,
+        abi: IdentityRegistryABI,
+        functionName: 'contains',
+        args: [resolvedWallet],
+      }) as boolean;
+    } catch {
+      return false;
+    }
+  }
+
   async isFrozen(wallet: string): Promise<boolean> {
     const resolvedWallet = resolveAddress(wallet);
     return await this.publicClient.readContract({
